@@ -26,7 +26,7 @@ Use this checklist for manual GrillPad tablet validation before merge.
 - [ ] `/package` only works during `package_selection`
 - [ ] `/order/initial` only works during `initial_order`
 - [ ] `/order/review` only works during `review`
-- [ ] `/order/refill` only works during `refill` and only shows refill-eligible items
+- [ ] `/order/refill` only works during `refill` and only shows refill-eligible items (items marked refill-allowed; no initial-only items)
 - [ ] `/session` is reachable for active session view
 - [ ] `/session/ended` appears after ending flow
 - [ ] Invalid/out-of-phase route access redirects to phase-correct route
@@ -35,7 +35,7 @@ Use this checklist for manual GrillPad tablet validation before merge.
 - [ ] App shows installability basics (install prompt/path available on supported browser)
 - [ ] Update banner/prompt appears when an update is available and does not force reload mid-session
 - [ ] API responses are not treated as cache truth during active flow
-- [ ] Refresh restores session correctly when backend/session state is still valid
+- [ ] Refresh restores session correctly via local storage recovery + successful `/session/current` verification when backend/session state is still valid
 
 ## Non-Blocking Warnings (can merge with note)
 - [ ] Minor visual polish issues (spacing/alignment) that do not block ordering

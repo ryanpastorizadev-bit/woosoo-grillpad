@@ -3,12 +3,12 @@
   "compilerOptions": {
     "target": "ESNext",
     "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "paths": {
       "~/*": ["app/*"],
       "@/*": ["app/*"]
     },
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "types": [
       "node",

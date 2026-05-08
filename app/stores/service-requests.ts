@@ -1,47 +1,34 @@
 import { defineStore } from 'pinia'
 
 export type ServiceRequestType = 'water'
-  | 'billing'
+  | 'bill_request'
   | 'call_staff'
   | 'clean_table'
   | 'extra_utensils'
-  | 'napkins'
-
-export type ServiceRequestStatus = 'idle' | 'pending' | 'success' | 'error'
 
 export interface ServiceRequestItem {
   type: ServiceRequestType
   label: string
-  status: ServiceRequestStatus
-  message: string | null
-  updatedAt: string | null
+  detail: string
+  selected: boolean
 }
 
 interface ServiceRequestsState {
   items: ServiceRequestItem[]
 }
 
-interface RequestOptions {
-  autoResolve?: boolean
-  succeed?: boolean
-  delayMs?: number
-}
-
-const DEFAULT_REQUESTS: ReadonlyArray<Pick<ServiceRequestItem, 'type' | 'label'>> = [
-  { type: 'water', label: 'Water' },
-  { type: 'billing', label: 'Billing' },
-  { type: 'call_staff', label: 'Call Staff' },
-  { type: 'clean_table', label: 'Clean Table' },
-  { type: 'extra_utensils', label: 'Extra Utensils' },
-  { type: 'napkins', label: 'Napkins' },
+const DEFAULT_REQUESTS: ReadonlyArray<Pick<ServiceRequestItem, 'type' | 'label' | 'detail'>> = [
+  { type: 'water', label: 'Water', detail: 'Fresh water refill' },
+  { type: 'bill_request', label: 'Bill Request', detail: 'Ask for the check' },
+  { type: 'call_staff', label: 'Call Staff', detail: 'Get help from the floor team' },
+  { type: 'clean_table', label: 'Clean Table', detail: 'Clear plates and spills' },
+  { type: 'extra_utensils', label: 'Extra Utensils', detail: 'Bring chopsticks or tongs' },
 ]
 
 function freshItems(): ServiceRequestItem[] {
   return DEFAULT_REQUESTS.map(request => ({
     ...request,
-    status: 'idle',
-    message: null,
-    updatedAt: null,
+    selected: false,
   }))
 }
 
@@ -50,37 +37,24 @@ export const useServiceRequestsStore = defineStore('service-requests', {
     items: freshItems(),
   }),
   getters: {
-    hasPending: state => state.items.some(item => item.status === 'pending'),
+    selectedItems: state => state.items.filter(item => item.selected),
+    selectedTypes(): ServiceRequestType[] {
+      return this.selectedItems.map(item => item.type)
+    },
+    hasSelection(): boolean {
+      return this.selectedItems.length > 0
+    },
+    selectionCount(): number {
+      return this.selectedItems.length
+    },
   },
   actions: {
-    request(type: ServiceRequestType, options: RequestOptions = {}) {
-      const item = this.items.find(request => request.type === type)
-      if (!item || item.status === 'pending')
-        return false
-
-      item.status = 'pending'
-      item.message = 'Waiting for staff confirmation...'
-      item.updatedAt = new Date().toISOString()
-
-      if (options.autoResolve ?? true) {
-        const delayMs = options.delayMs ?? 700
-        const succeed = options.succeed ?? true
-        setTimeout(() => {
-          this.resolve(type, { succeed })
-        }, delayMs)
-      }
-
-      return true
-    },
-    resolve(type: ServiceRequestType, options: { succeed?: boolean } = {}) {
+    toggle(type: ServiceRequestType) {
       const item = this.items.find(request => request.type === type)
       if (!item)
         return false
 
-      const succeed = options.succeed ?? true
-      item.status = succeed ? 'success' : 'error'
-      item.message = succeed ? 'Request sent. Staff has been notified.' : 'Request failed. Please try again.'
-      item.updatedAt = new Date().toISOString()
+      item.selected = !item.selected
       return true
     },
     clear(type: ServiceRequestType) {
@@ -88,9 +62,7 @@ export const useServiceRequestsStore = defineStore('service-requests', {
       if (!item)
         return false
 
-      item.status = 'idle'
-      item.message = null
-      item.updatedAt = new Date().toISOString()
+      item.selected = false
       return true
     },
     resetAll() {

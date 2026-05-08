@@ -56,3 +56,8 @@ flowchart TD
 - Route guards must derive navigation from `session.phase`.
 - Pages/components must not hardcode API URLs.
 - Reverb payloads are hints; API refresh remains the source of truth.
+
+## Future Integration Notes
+- The service request shell is intentionally frontend-only until the backend contract exists.
+- `app/components/service/ServiceRequestBar.vue` should remain the submit entry point.
+- Future API wiring can read `useServiceRequestsStore().selectedTypes` and forward those values through `services/api/*` once an endpoint is added.

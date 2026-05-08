@@ -29,7 +29,12 @@ export const useUpdateStore = defineStore('update', {
         throw new Error('Update apply handler is not registered.')
 
       this.isApplyingUpdate = true
-      applyHandler()
+      try {
+        applyHandler()
+      }
+      finally {
+        this.isApplyingUpdate = false
+      }
     },
   },
 })

@@ -20,6 +20,10 @@ export const API_ENDPOINTS = {
     list: '/print-events',
     acknowledge: (eventId: string) => `/print-events/${eventId}/ack`,
   },
+  pos: {
+    readiness: '/device/pos/readiness',
+    tables: '/device/pos/tables',
+  },
 } as const
 
 export type ApiEndpoints = typeof API_ENDPOINTS

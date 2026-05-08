@@ -94,6 +94,7 @@ describe('device registration contract', () => {
       success: true,
       device: { id: 123 },
       table: { id: 5, name: 'Table 5' },
+      broadcasting: { key: 'app-key', host: '127.0.0.1', port: 8080, scheme: 'ws' },
     })).toThrow()
   })
 })

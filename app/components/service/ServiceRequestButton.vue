@@ -35,7 +35,7 @@ function onClear() {
 
 <template>
   <div class="space-y-1.5">
-    <button :aria-label="`Request ${item.label}`" :class="classes" :disabled="isPending" type="button" @click="onPrimaryAction">
+    <button :class="classes" :disabled="isPending" type="button" @click="onPrimaryAction">
       <span>{{ item.label }}</span>
       <span v-if="isPending" class="ml-2 text-xs opacity-80">Pending</span>
     </button>

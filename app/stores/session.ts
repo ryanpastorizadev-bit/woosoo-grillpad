@@ -45,6 +45,7 @@ export const useSessionStore = defineStore('session', {
     canReview: state => state.phase === 'review',
     canRefill: state => state.phase === 'refill' && Boolean(state.initialOrderId),
     isActive: state => !['unregistered', 'ended'].includes(state.phase),
+    isOrderingPhase: state => ['initial_order', 'review', 'refill'].includes(state.phase),
   },
   actions: {
     start(tableId: string, sessionId: string) {

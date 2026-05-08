@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const session = useSessionStore()
-const showServiceRequestBar = computed(() => ['initial_order', 'review', 'refill'].includes(session.phase))
+const showServiceRequestBar = computed(() => session.isOrderingPhase)
 const shellClass = computed(() => (showServiceRequestBar.value ? 'grillpad-shell min-h-dvh p-6 pb-44' : 'grillpad-shell min-h-dvh p-6'))
 </script>
 

@@ -22,13 +22,19 @@ const DeviceRegistrationResponseSchema = z.object({
   broadcasting: BroadcastingConfigSchema,
 })
 
+export type DeviceRegistrationResponse = z.infer<typeof DeviceRegistrationResponseSchema>
+
 export interface RegisterDevicePayload extends Record<string, unknown> {
   token?: string
   security_code?: string
 }
 
+export function parseDeviceRegistrationResponse(payload: unknown): DeviceRegistrationResponse {
+  return DeviceRegistrationResponseSchema.parse(payload)
+}
+
 export async function registerDevice(payload: RegisterDevicePayload) {
-  const { api, parse } = useApi()
+  const { api } = useApi()
   const response = await api(API_ENDPOINTS.device.register, { method: 'POST', body: payload })
-  return parse(DeviceRegistrationResponseSchema, response)
+  return parseDeviceRegistrationResponse(response)
 }

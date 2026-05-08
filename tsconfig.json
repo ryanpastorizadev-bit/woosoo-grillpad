@@ -2,6 +2,11 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["app/*"],
+      "@/*": ["app/*"]
+    },
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
@@ -16,5 +21,10 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "app/**/*",
+    "tests/**/*",
+    "types/**/*"
+  ]
 }

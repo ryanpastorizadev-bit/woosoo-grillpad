@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { API_ENDPOINTS } from './endpoints'
 
+const IdToStringSchema = z.union([z.string(), z.number()]).pipe(z.coerce.string())
+
 const BroadcastingConfigSchema = z.object({
   key: z.string().optional(),
   host: z.string().optional(),
@@ -11,12 +13,12 @@ const BroadcastingConfigSchema = z.object({
 const DeviceRegistrationResponseSchema = z.object({
   success: z.boolean(),
   device: z.object({
-    id: z.union([z.string(), z.number()]).transform(String),
+    id: IdToStringSchema,
     name: z.string().optional().nullable(),
   }),
   token: z.string(),
   table: z.object({
-    id: z.union([z.string(), z.number()]).transform(String),
+    id: IdToStringSchema,
     name: z.string(),
   }),
   broadcasting: BroadcastingConfigSchema,

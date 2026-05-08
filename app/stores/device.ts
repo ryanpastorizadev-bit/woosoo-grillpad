@@ -1,6 +1,7 @@
 import type { DeviceRegistrationResponse } from '~/services/api/device'
 import { defineStore } from 'pinia'
 import { z } from 'zod'
+import type { DeviceRegistrationResponse } from '~/services/api/device'
 
 interface DeviceState {
   token: string | null

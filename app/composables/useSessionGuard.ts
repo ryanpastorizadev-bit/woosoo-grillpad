@@ -15,7 +15,9 @@ interface SessionGuardState {
 export function routeForPhase(phase: SessionPhase): string {
   if (phase === 'package_selection') return '/package'
   if (phase === 'initial_order') return '/order/initial'
+  if (phase === 'review') return '/order/review'
   if (phase === 'refill') return '/order/refill'
+  if (phase === 'ended') return '/session/ended'
   return '/start'
 }
 
@@ -39,7 +41,7 @@ export function validateRoute(path: string, state: SessionGuardState): GuardResu
   }
 
   if (path === '/order/review') {
-    if (state.phase !== 'initial_order') return { allowed: false, redirectTo: routeForPhase(state.phase) }
+    if (state.phase !== 'review') return { allowed: false, redirectTo: routeForPhase(state.phase) }
     if (state.initialCount <= 0) return { allowed: false, redirectTo: '/order/initial' }
     return { allowed: true }
   }
@@ -74,11 +76,11 @@ export function useSessionGuard() {
     phase: session.phase,
     isRegistered: device.isRegistered,
     initialCount: cart.initialCount,
-    isActive: session.isActive
+    isActive: session.isActive,
   })
 
   return {
     routeForPhase,
-    validateRoute: validateCurrentRoute
+    validateRoute: validateCurrentRoute,
   }
 }

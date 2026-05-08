@@ -32,8 +32,8 @@ function clearSelections() {
         <AppButton variant="ghost" :disabled="!serviceRequests.hasSelection" @click="clearSelections">
           Clear selection
         </AppButton>
-        <AppButton :disabled="true">
-          Submit coming soon
+        <AppButton :disabled="!serviceRequests.backendReady">
+          Submit Requests
         </AppButton>
       </div>
     </div>

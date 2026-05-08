@@ -25,7 +25,7 @@ function onToggle() {
 </script>
 
 <template>
-  <button :class="classes" type="button" @click="onToggle">
+  <button :class="classes" :aria-pressed="item.selected" type="button" @click="onToggle">
     <div class="flex items-start justify-between gap-3">
       <div>
         <p class="text-base font-bold">
@@ -39,7 +39,7 @@ function onToggle() {
         class="inline-flex min-w-20 justify-center rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[.16em]"
         :class="item.selected ? 'border-primary/40 bg-primary/15 text-primary' : 'border-white/10 text-white/60'"
       >
-        {{ item.selected ? 'Selected' : 'Tap to add' }}
+        {{ item.selected ? 'Selected' : 'Select' }}
       </span>
     </div>
   </button>

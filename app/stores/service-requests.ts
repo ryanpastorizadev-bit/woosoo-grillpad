@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 export type ServiceRequestType = 'water'
-  | 'bill_request'
+  | 'billing'
   | 'call_staff'
   | 'clean_table'
   | 'extra_utensils'
@@ -19,7 +19,7 @@ interface ServiceRequestsState {
 
 const DEFAULT_REQUESTS: ReadonlyArray<Pick<ServiceRequestItem, 'type' | 'label' | 'detail'>> = [
   { type: 'water', label: 'Water', detail: 'Fresh water refill' },
-  { type: 'bill_request', label: 'Bill Request', detail: 'Ask for the check' },
+  { type: 'billing', label: 'Bill Request', detail: 'Ask for the check' },
   { type: 'call_staff', label: 'Call Staff', detail: 'Get help from the floor team' },
   { type: 'clean_table', label: 'Clean Table', detail: 'Clear plates and spills' },
   { type: 'extra_utensils', label: 'Extra Utensils', detail: 'Bring chopsticks or tongs' },
@@ -43,6 +43,10 @@ export const useServiceRequestsStore = defineStore('service-requests', {
     },
     hasSelection(): boolean {
       return this.selectedItems.length > 0
+    },
+    // Submit stays disabled until a real backend endpoint is introduced.
+    backendReady(): boolean {
+      return false
     },
     selectionCount(): number {
       return this.selectedItems.length

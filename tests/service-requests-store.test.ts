@@ -13,6 +13,7 @@ describe('service requests store', () => {
     expect(store.items).toHaveLength(5)
     expect(store.items.every(item => !item.selected)).toBe(true)
     expect(store.hasSelection).toBe(false)
+    expect(store.backendReady).toBe(false)
     expect(store.selectedTypes).toEqual([])
   })
 
@@ -36,13 +37,13 @@ describe('service requests store', () => {
 
   it('supports multiple selections and clearing a single request', () => {
     const store = useServiceRequestsStore()
-    store.toggle('bill_request')
+    store.toggle('billing')
     store.toggle('call_staff')
 
     expect(store.selectionCount).toBe(2)
-    expect(store.selectedTypes).toEqual(['bill_request', 'call_staff'])
+    expect(store.selectedTypes).toEqual(['billing', 'call_staff'])
 
-    const cleared = store.clear('bill_request')
+    const cleared = store.clear('billing')
 
     expect(cleared).toBe(true)
     expect(store.selectedTypes).toEqual(['call_staff'])

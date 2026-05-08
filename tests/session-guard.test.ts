@@ -15,7 +15,7 @@ describe('session route guard', () => {
 
   it('prevents review route when initial cart is empty', () => {
     const result = validateRoute('/order/review', {
-      phase: 'initial_order',
+      phase: 'review',
       isRegistered: true,
       initialCount: 0,
       isActive: true,
@@ -37,5 +37,23 @@ describe('session route guard', () => {
 
   it('maps ended phase to session ended route', () => {
     expect(routeForPhase('ended')).toBe('/session/ended')
+  })
+
+  it('allows review route only during review phase', () => {
+    const denied = validateRoute('/order/review', {
+      phase: 'initial_order',
+      isRegistered: true,
+      initialCount: 1,
+      isActive: true,
+    })
+    const allowed = validateRoute('/order/review', {
+      phase: 'review',
+      isRegistered: true,
+      initialCount: 1,
+      isActive: true,
+    })
+
+    expect(denied).toEqual({ allowed: false, redirectTo: '/order/initial' })
+    expect(allowed).toEqual({ allowed: true })
   })
 })

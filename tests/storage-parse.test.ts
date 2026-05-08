@@ -25,6 +25,19 @@ describe('storage parsing', () => {
     }))).toThrow()
   })
 
+  it('parses valid persisted session state payload', () => {
+    const value = parseSessionState(JSON.stringify({
+      sessionId: 'session-1',
+      tableId: 'table-1',
+      phase: 'review',
+      packageId: 'pkg-1',
+      initialOrderId: null,
+      initialOrderSubmittedAt: null,
+    }))
+
+    expect(value.phase).toBe('review')
+  })
+
   it('rejects non-json persisted device payload', () => {
     expect(() => parseDeviceState('{invalid json')).toThrow()
   })

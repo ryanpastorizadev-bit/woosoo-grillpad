@@ -47,6 +47,9 @@ npm run build
 npm run test
 ```
 
+Manual QA checklist:
+- `docs/QA_CHECKLIST.md`
+
 Manual validation:
 
 - `/start` restores an already-registered device only after backend verification succeeds.

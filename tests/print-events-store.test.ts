@@ -36,7 +36,7 @@ describe('print events store behavior', () => {
     await store.refresh('session-1')
 
     expect(store.events).toHaveLength(1)
-    expect(store.events[0].id).toBe('evt-1')
+    expect(store.events[0]?.id).toBe('evt-1')
     expect(store.lastError).toBeNull()
   })
 
@@ -60,7 +60,7 @@ describe('print events store behavior', () => {
 
     await store.acknowledge('evt-1')
 
-    expect(store.events[0].status).toBe('acknowledged')
+    expect(store.events[0]?.status).toBe('acknowledged')
   })
 
   it('acknowledge inserts unknown returned event', async () => {
@@ -76,7 +76,7 @@ describe('print events store behavior', () => {
 
     await store.acknowledge('evt-new')
 
-    expect(store.events[0].id).toBe('evt-new')
+    expect(store.events[0]?.id).toBe('evt-new')
   })
 
   it('sets lastError on refresh failure', async () => {

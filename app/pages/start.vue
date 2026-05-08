@@ -106,8 +106,8 @@ async function submitRegistration() {
 </script>
 
 <template>
-  <section class="mx-auto grid min-h-[calc(100dvh-3rem)] max-w-6xl place-items-center">
-    <div class="gp-card max-w-3xl p-10 text-center">
+  <AppScreen width="lg" class="grid min-h-[calc(100dvh-3rem)] place-items-center">
+    <AppCard padding="lg" class="max-w-3xl text-center">
       <p class="mb-4 text-sm uppercase tracking-[.35em] text-primary/80">
         Woosoo
       </p>
@@ -118,17 +118,15 @@ async function submitRegistration() {
         Register this tablet with the code from the admin device screen, then start the dining session assigned by the backend.
       </p>
 
-      <p v-if="loading" class="mt-8 text-sm text-white/60">
-        Loading session state...
-      </p>
+      <LoadingState v-if="loading" class="mt-8" message="Loading session state..." />
 
       <form v-else class="mt-8 space-y-4 text-left" @submit.prevent="submitRegistration">
-        <div v-if="needsSessionVerification" class="rounded-lg border border-amber-300/40 bg-amber-300/10 p-3 text-sm text-amber-100">
+        <AppCard v-if="needsSessionVerification" padding="sm" class="border-amber-300/40 bg-amber-300/10 text-sm text-amber-100">
           Existing cached session was not trusted because backend verification failed.
           <AppButton class="mt-2" variant="ghost" type="button" @click="bootstrapSession">
             Retry verification
           </AppButton>
-        </div>
+        </AppCard>
 
         <label class="text-sm text-white/70">
           Registration Token
@@ -148,9 +146,7 @@ async function submitRegistration() {
           Device ID, table ID, table name, and API token are accepted only from the backend registration response.
         </p>
 
-        <p v-if="errorMessage" class="text-sm text-red-300">
-          {{ errorMessage }}
-        </p>
+        <ErrorState v-if="errorMessage" :message="errorMessage" />
         <AppButton type="submit" size="lg" class="w-full" :disabled="submitting">
           {{ submitting ? 'Registering...' : 'Start Dining' }}
         </AppButton>
@@ -164,6 +160,6 @@ async function submitRegistration() {
       <p class="mt-10 text-xs text-white/35">
         v{{ config.public.appVersion }}
       </p>
-    </div>
-  </section>
+    </AppCard>
+  </AppScreen>
 </template>

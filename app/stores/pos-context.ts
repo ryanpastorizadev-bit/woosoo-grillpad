@@ -49,7 +49,7 @@ export const usePosContextStore = defineStore('pos-context', {
         const table = this.tableById(id)
         if (!table)
           return 'unknown'
-        return normalizeTableStatus(table.normalizedStatus)
+        return normalizeTableStatus(table.rawStatus)
       }
     },
   },
@@ -107,13 +107,13 @@ export const usePosContextStore = defineStore('pos-context', {
 
     /**
      * Called after an order is submitted. Updates the assigned table's
-     * normalized status to `active` to reflect order-sent state and
-     * then re-fetches table data from the backend.
+     * status to `active` to reflect order-sent state and then re-fetches
+     * table data from the backend.
      */
     async markTableOrderSent(tableId: string) {
       const index = this.tables.findIndex(t => t.id === tableId)
       if (index >= 0) {
-        this.tables[index] = { ...this.tables[index]!, normalizedStatus: 'active' }
+        this.tables[index] = { ...this.tables[index]!, rawStatus: 'active', normalizedStatus: 'active' }
       }
       if (!this.useMock) {
         await this.refreshTables()

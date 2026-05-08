@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { registerDevice } from '~/services/api/device'
 import { restoreSession, startSession } from '~/services/api/session'
 
 definePageMeta({ middleware: ['session-phase'] })
@@ -11,11 +12,15 @@ const loading = ref(true)
 const submitting = ref(false)
 const errorMessage = ref<string | null>(null)
 const needsSessionVerification = ref(false)
-const registration = reactive({
-  token: '',
-  deviceId: '',
-  tableId: '',
-  tableName: '',
+const registrationToken = ref('')
+
+const normalizedRegistrationToken = computed(() => registrationToken.value.replace(/\D/g, '').slice(0, 6))
+const canSubmitRegistration = computed(() => normalizedRegistrationToken.value.length === 6 && !submitting.value)
+
+watch(registrationToken, (value) => {
+  const normalized = value.replace(/\D/g, '').slice(0, 6)
+  if (value !== normalized)
+    registrationToken.value = normalized
 })
 
 async function bootstrapSession() {
@@ -53,9 +58,8 @@ async function bootstrapSession() {
     }
   }
 
-  if (!device.isRegistered) {
+  if (!device.isRegistered)
     session.reset()
-  }
 
   loading.value = false
 }
@@ -65,30 +69,23 @@ onMounted(async () => {
 })
 
 async function submitRegistration() {
-  if (submitting.value)
+  if (!canSubmitRegistration.value)
     return
+
   errorMessage.value = null
   needsSessionVerification.value = false
-  if (!registration.token || !registration.deviceId || !registration.tableId || !registration.tableName) {
-    errorMessage.value = 'All registration fields are required.'
-    return
-  }
-
   submitting.value = true
-  try {
-    device.setDevice({
-      token: registration.token,
-      deviceId: registration.deviceId,
-      tableId: registration.tableId,
-      tableName: registration.tableName,
-    })
 
-    const started = await startSession({ tableId: registration.tableId })
+  try {
+    const registered = await registerDevice({ token: normalizedRegistrationToken.value })
+    device.setFromRegistration(registered)
+
+    const started = await startSession({ tableId: registered.table.id })
     session.start(started.tableId, started.sessionId)
     await navigateTo(routeForPhase(session.phase))
   }
   catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : 'Failed to start dining session.'
+    errorMessage.value = error instanceof Error ? error.message : 'Failed to register this tablet. Please ask staff for a new code.'
     device.clearDevice()
     session.reset()
   }
@@ -115,38 +112,54 @@ async function submitRegistration() {
         Loading session state...
       </p>
 
-      <form v-else class="mt-8 space-y-4 text-left" @submit.prevent="submitRegistration">
+      <form v-else class="mt-8 space-y-5 text-left" @submit.prevent="submitRegistration">
         <div v-if="needsSessionVerification" class="rounded-lg border border-amber-300/40 bg-amber-300/10 p-3 text-sm text-amber-100">
           Existing cached session was not trusted because backend verification failed.
           <AppButton class="mt-2" variant="ghost" type="button" @click="bootstrapSession">
             Retry verification
           </AppButton>
         </div>
-        <div class="grid grid-cols-2 gap-4">
-          <label class="text-sm text-white/70">
-            Device Token
-            <input v-model="registration.token" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
-          </label>
-          <label class="text-sm text-white/70">
-            Device ID
-            <input v-model="registration.deviceId" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
+
+        <div class="rounded-2xl border border-white/10 bg-black/20 p-5">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-[.28em] text-primary/70">
+                Tablet Registration
+              </p>
+              <h2 class="mt-2 text-2xl font-bold text-white">
+                Enter your 6-digit table code
+              </h2>
+              <p class="mt-2 text-sm text-white/55">
+                Ask staff for the code shown on the admin screen. QR scanning will be added in the next hardware pass.
+              </p>
+            </div>
+            <div class="rounded-xl border border-dashed border-primary/40 px-4 py-3 text-center text-xs uppercase tracking-[.18em] text-primary/75">
+              QR Scanner<br>
+              Placeholder
+            </div>
+          </div>
+
+          <label class="mt-6 block text-sm text-white/70">
+            Registration Code
+            <input
+              v-model="registrationToken"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="6"
+              type="text"
+              class="mt-2 w-full rounded-xl border border-white/20 bg-black/40 px-5 py-4 text-center text-4xl font-black tracking-[.45em] text-white outline-none transition focus:border-primary/70"
+              autocomplete="one-time-code"
+              placeholder="000000"
+            >
           </label>
         </div>
-        <div class="grid grid-cols-2 gap-4">
-          <label class="text-sm text-white/70">
-            Table ID
-            <input v-model="registration.tableId" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
-          </label>
-          <label class="text-sm text-white/70">
-            Table Name
-            <input v-model="registration.tableName" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
-          </label>
-        </div>
-        <p v-if="errorMessage" class="text-sm text-red-300">
+
+        <p v-if="errorMessage" class="rounded-lg border border-red-300/30 bg-red-500/10 p-3 text-sm text-red-200">
           {{ errorMessage }}
         </p>
-        <AppButton type="submit" size="lg" class="w-full" :disabled="submitting">
-          {{ submitting ? 'Starting...' : 'Start Dining' }}
+
+        <AppButton type="submit" size="lg" class="w-full" :disabled="!canSubmitRegistration">
+          {{ submitting ? 'Registering Tablet...' : 'Register Tablet & Start Dining' }}
         </AppButton>
       </form>
 

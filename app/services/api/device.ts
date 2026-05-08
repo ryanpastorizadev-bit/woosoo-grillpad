@@ -25,7 +25,7 @@ const DeviceRegistrationResponseSchema = z.object({
   broadcasting: BroadcastingConfigSchema,
 })
 
-export type DeviceRegistrationResponse = z.output<typeof DeviceRegistrationResponseSchema>
+export type DeviceRegistrationResponse = z.infer<typeof DeviceRegistrationResponseSchema>
 
 export interface RegisterDevicePayload extends Record<string, unknown> {
   token?: string

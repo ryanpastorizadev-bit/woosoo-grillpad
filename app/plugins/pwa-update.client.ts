@@ -1,7 +1,5 @@
 import { registerSW } from 'virtual:pwa-register'
 
-let removeNetworkListeners: (() => void) | null = null
-
 export default defineNuxtPlugin(() => {
   const update = useUpdateStore()
 
@@ -17,18 +15,16 @@ export default defineNuxtPlugin(() => {
 
   const onOnline = () => update.setOnlineStatus(true)
   const onOffline = () => update.setOnlineStatus(false)
-  removeNetworkListeners?.()
   window.addEventListener('online', onOnline)
   window.addEventListener('offline', onOffline)
-  removeNetworkListeners = () => {
+  const removeNetworkListeners = () => {
     window.removeEventListener('online', onOnline)
     window.removeEventListener('offline', onOffline)
   }
 
   if (import.meta.hot) {
     import.meta.hot.dispose(() => {
-      removeNetworkListeners?.()
-      removeNetworkListeners = null
+      removeNetworkListeners()
     })
   }
 })

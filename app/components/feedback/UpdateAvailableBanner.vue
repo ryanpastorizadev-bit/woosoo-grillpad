@@ -9,9 +9,12 @@ const positionClass = computed(() => {
   }
   return hasNetworkBanner ? 'bottom-24' : 'bottom-6'
 })
-const message = computed(() => session.isActive
-  ? 'The new UI will apply after the current dining session ends.'
-  : 'Reload is safe now. No active dining session will be interrupted.')
+const message = computed(() => {
+  if (session.isActive) {
+    return 'The new UI will apply after the current dining session ends.'
+  }
+  return 'Reload is safe now. No active dining session will be interrupted.'
+})
 </script>
 
 <template>

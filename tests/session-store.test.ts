@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { useSessionStore } from '~/stores/session'
 
 describe('session store transitions', () => {
@@ -40,5 +40,31 @@ describe('session store transitions', () => {
     expect(store.phase).toBe('refill')
     expect(store.initialOrderId).toBe('order-1')
     expect(store.initialOrderSubmittedAt).toBeTypeOf('string')
+  })
+
+  it('rejects selecting package outside package selection phase', () => {
+    const store = useSessionStore()
+    store.start('table-1', 'session-1')
+    store.setPackage('pkg-1')
+
+    expect(() => store.setPackage('pkg-2')).toThrow('Package can only be selected before initial order.')
+  })
+
+  it('supports entering refill mode and ending/resetting session', () => {
+    const store = useSessionStore()
+    store.start('table-1', 'session-1')
+    store.setPackage('pkg-1')
+    store.enterRefillMode('order-1')
+
+    expect(store.canRefill).toBe(true)
+    expect(store.phase).toBe('refill')
+
+    store.end()
+    expect(store.phase).toBe('ended')
+    expect(store.isActive).toBe(false)
+
+    store.reset()
+    expect(store.phase).toBe('unregistered')
+    expect(store.sessionId).toBeNull()
   })
 })

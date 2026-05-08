@@ -45,7 +45,7 @@ flowchart TD
 - [x] State machine/Contract integrity: explicit session phase gates, including `review`.
 - [x] Security/Auth boundaries: token attached in API composable, backend remains source of truth.
 - [x] Monorepo/Shared config drift: frontend changes scoped to `woosoo-grillpad` only.
-- [ ] Test sufficiency: next pass should add Vitest coverage for session guard, cart rules, endpoint contracts, and print event store.
+- [x] Test sufficiency: Vitest coverage includes session guard routing, session transitions, cart clearing rules, device store persistence semantics, print event store behavior, and PWA update store behavior.
 
 ## Hard Rules
 - Initial order and refill carts are separated.

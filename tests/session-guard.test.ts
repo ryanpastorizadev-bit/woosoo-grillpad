@@ -57,6 +57,39 @@ describe('session route guard', () => {
     expect(result).toEqual({ allowed: true })
   })
 
+  it('redirects package route to current phase route when package selection is complete', () => {
+    const result = validateRoute('/package', {
+      phase: 'initial_order',
+      isRegistered: true,
+      initialCount: 1,
+      isActive: true,
+    })
+
+    expect(result).toEqual({ allowed: false, redirectTo: '/order/initial' })
+  })
+
+  it('blocks active session route when session is not active', () => {
+    const result = validateRoute('/session', {
+      phase: 'ended',
+      isRegistered: true,
+      initialCount: 1,
+      isActive: false,
+    })
+
+    expect(result).toEqual({ allowed: false, redirectTo: '/session/ended' })
+  })
+
+  it('blocks session ended route before ended phase', () => {
+    const result = validateRoute('/session/ended', {
+      phase: 'refill',
+      isRegistered: true,
+      initialCount: 1,
+      isActive: true,
+    })
+
+    expect(result).toEqual({ allowed: false, redirectTo: '/order/refill' })
+  })
+
   it('maps ended phase to session ended route', () => {
     expect(routeForPhase('ended')).toBe('/session/ended')
   })

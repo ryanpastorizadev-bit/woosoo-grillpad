@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePrintEventsStore } from '~/stores/print-events'
 
 const mocks = vi.hoisted(() => {
@@ -86,5 +86,41 @@ describe('print events store behavior', () => {
     await store.refresh('session-1')
 
     expect(store.lastError).toBe('refresh failed')
+  })
+
+  it('sets and rethrows lastError on acknowledge failure', async () => {
+    const store = usePrintEventsStore()
+    mocks.ackPrintEvent.mockRejectedValueOnce(new Error('ack failed'))
+
+    await expect(store.acknowledge('evt-1')).rejects.toThrow('ack failed')
+    expect(store.lastError).toBe('ack failed')
+  })
+
+  it('exposes pendingEvents and clears all state', () => {
+    const store = usePrintEventsStore()
+    store.events = [{
+      id: 'evt-1',
+      orderId: 'ord-1',
+      type: 'kitchen',
+      status: 'pending',
+      createdAt: '2026-01-01T00:00:00.000Z',
+    }, {
+      id: 'evt-2',
+      orderId: 'ord-1',
+      type: 'bar',
+      status: 'acknowledged',
+      createdAt: '2026-01-01T00:00:00.000Z',
+    }]
+    store.loading = true
+    store.lastError = 'test'
+
+    expect(store.pendingEvents).toHaveLength(1)
+    expect(store.hasPendingEvents).toBe(true)
+
+    store.clear()
+
+    expect(store.events).toEqual([])
+    expect(store.loading).toBe(false)
+    expect(store.lastError).toBeNull()
   })
 })

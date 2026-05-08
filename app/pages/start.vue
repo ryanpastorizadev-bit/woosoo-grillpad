@@ -83,12 +83,7 @@ async function submitRegistration() {
       throw new Error('Device registration was rejected by the server.')
     }
 
-    device.setDevice({
-      token: registered.token,
-      deviceId: registered.device.id,
-      tableId: registered.table.id,
-      tableName: registered.table.name,
-    })
+    device.setFromRegistration(registered)
 
     const started = await startSession({ tableId: registered.table.id })
     session.start(started.tableId, started.sessionId)

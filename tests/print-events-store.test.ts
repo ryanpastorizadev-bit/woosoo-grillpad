@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePrintEventsStore } from '~/stores/print-events'
 
 const mocks = vi.hoisted(() => {
@@ -86,5 +86,13 @@ describe('print events store behavior', () => {
     await store.refresh('session-1')
 
     expect(store.lastError).toBe('refresh failed')
+  })
+
+  it('sets lastError on acknowledge failure', async () => {
+    const store = usePrintEventsStore()
+    mocks.ackPrintEvent.mockRejectedValueOnce(new Error('ack failed'))
+
+    await expect(store.acknowledge('evt-1')).rejects.toThrow('ack failed')
+    expect(store.lastError).toBe('ack failed')
   })
 })

@@ -16,7 +16,7 @@ withDefaults(defineProps<{
     <p v-if="description" class="mt-2 text-sm text-white/60">
       {{ description }}
     </p>
-    <div class="mt-4">
+    <div v-if="$slots.default" class="mt-4">
       <slot />
     </div>
   </AppCard>

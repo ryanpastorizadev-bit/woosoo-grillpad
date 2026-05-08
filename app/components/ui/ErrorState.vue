@@ -24,7 +24,7 @@ const emit = defineEmits<{
     <AppButton v-if="retryLabel" class="mt-4" variant="ghost" @click="emit('retry')">
       {{ retryLabel }}
     </AppButton>
-    <div class="mt-4">
+    <div v-if="$slots.default" class="mt-4">
       <slot />
     </div>
   </AppCard>

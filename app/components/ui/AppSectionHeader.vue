@@ -22,7 +22,7 @@ withDefaults(defineProps<{
       <p v-if="description" class="mt-2 text-white/60">
         {{ description }}
       </p>
-      <div class="mt-2">
+      <div v-if="$slots.default" class="mt-2">
         <slot />
       </div>
     </div>

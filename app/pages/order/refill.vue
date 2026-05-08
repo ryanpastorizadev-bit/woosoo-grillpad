@@ -74,7 +74,7 @@ async function submitRefill() {
     <ErrorState
       v-if="errorMessage || order.lastError"
       class="mt-4"
-      :message="errorMessage || order.lastError || ''"
+      :message="errorMessage || order.lastError"
     />
     <div class="mt-8 grid grid-cols-3 gap-5">
       <MenuItemCard
@@ -92,7 +92,7 @@ async function submitRefill() {
     <EmptyState
       v-if="!menu.loading && items.length === 0"
       class="mt-6"
-      title="Only refill-eligible items are available"
+      title="No items available"
       description="Only refill-eligible items are available in this phase."
     />
     <BottomActionBar>

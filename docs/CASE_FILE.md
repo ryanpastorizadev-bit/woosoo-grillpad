@@ -1,30 +1,18 @@
-# CASE_FILE.md — GrillPad Frontend Contract Spine
+# CASE_FILE.md — GrillPad MVP Tablet Ordering Client
 
 ## Objective
-Build a Nuxt 4 tablet PWA frontend foundation that supports a sessioned eat-all-you-can flow with strict initial-order, review, and refill phases.
-
-## Current Case Status
-
-This branch tightens the frontend contract layer before deeper UI implementation:
-
-- Adds `docs/woosoo_final_spec.md` as the local source-of-truth contract.
-- Adds centralized endpoint constants in `app/services/api/endpoints.ts`.
-- Adds device registration, active order, and print event service contracts.
-- Promotes `review` into an explicit workflow phase.
-- Adds a print events store for printer/relay visibility.
+Deliver the Nuxt tablet ordering MVP that runs end-to-end with backend-backed session start/restore, initial orders, refill orders, active order visibility, print acknowledgement, and guarded phase routing.
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-  Start[/start/] --> Package[/package/]
+  Start[/start/] --> Restore[restoreSession]
+  Restore --> Package[/package/]
   Package --> Initial[/order/initial/]
-  Initial --> Review[/order/review/]
-  Review -->|edit cart| Initial
-  Review -->|submit first order| Refill[/order/refill/]
-  Refill --> Session[/session/]
-  Session --> Refill
-  Refill -->|staff/customer end| Ended[/session/ended/]
+  Initial -->|submit first order| Refill[/order/refill/]
+  Refill --> Active[/session/]
+  Active -->|staff/customer end| Ended[/session/ended/]
 
   Pinia[Pinia stores] --> SessionStore[session store]
   Pinia --> CartStore[cart store]
@@ -37,15 +25,15 @@ flowchart TD
   Services --> Api[useApi composable]
   Api --> Laravel[Laravel API]
   Laravel --> MySQL[(MySQL)]
-  Laravel --> Reverb[Reverb control events]
+  Laravel --> Reverb[Reverb/WebSocket live events]
 ```
 
 ## Audit Checklist
-- [x] Race conditions/Async leaks: no polling, no async mutex, no offline outbox by default.
-- [x] State machine/Contract integrity: explicit session phase gates, including `review`.
-- [x] Security/Auth boundaries: token attached in API composable, backend remains source of truth.
-- [x] Monorepo/Shared config drift: frontend changes scoped to `woosoo-grillpad` only.
-- [ ] Test sufficiency: next pass should add Vitest coverage for session guard, cart rules, endpoint contracts, and print event store.
+- [x] Race conditions/Async leaks: realtime connection lifecycle is bound to session identity and cleans up on reset.
+- [x] State machine/Contract integrity: explicit session phase gates and session-source-of-truth routing.
+- [x] Security/Auth boundaries: bearer token injection + 401 invalidation and session reset.
+- [x] Monorepo/Shared config drift: work limited to `woosoo-grillpad` frontend package.
+- [x] Test sufficiency: targeted tests cover route guards, submission guards, storage parsing, menu/refill rules, and realtime/store helpers.
 
 ## Hard Rules
 - Initial order and refill carts are separated.
@@ -53,6 +41,4 @@ flowchart TD
 - Refill route must never display the full initial menu.
 - API responses are never cached as truth.
 - App updates are deferred during active sessions.
-- Route guards must derive navigation from `session.phase`.
-- Pages/components must not hardcode API URLs.
-- Reverb payloads are hints; API refresh remains the source of truth.
+- Print events can be acknowledged from the active session screen.

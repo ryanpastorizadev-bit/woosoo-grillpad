@@ -33,14 +33,28 @@ export interface OrderSessionState {
   initialOrderSubmittedAt: string | null
 }
 
-export type PrintEventStatus = 'pending' | 'printed' | 'acknowledged' | 'failed'
+export interface ActiveOrderItem {
+  id: string
+  name: string
+  quantity: number
+  status?: string | null
+}
+
+export interface ActiveOrder {
+  id: string
+  sessionId: string
+  tableId: string
+  status: string
+  items: ActiveOrderItem[]
+  submittedAt: string | null
+  updatedAt: string | null
+}
 
 export interface PrintEvent {
   id: string
   orderId: string
-  type: string
-  status: PrintEventStatus
-  message?: string
-  createdAt: string
-  acknowledgedAt?: string | null
+  status: string
+  acknowledgedAt: string | null
+  createdAt: string | null
+  updatedAt: string | null
 }

@@ -5,51 +5,60 @@ import { ackPrintEvent, getPrintEvents } from '~/services/api/print-events'
 interface PrintEventsState {
   events: PrintEvent[]
   loading: boolean
-  lastError: string | null
+  error: string | null
+}
+
+export function mergePrintEvents(existing: PrintEvent[], incoming: PrintEvent): PrintEvent[] {
+  const index = existing.findIndex(event => event.id === incoming.id)
+  if (index === -1)
+    return [incoming, ...existing]
+  const merged = [...existing]
+  merged[index] = incoming
+  return merged
 }
 
 export const usePrintEventsStore = defineStore('print-events', {
   state: (): PrintEventsState => ({
     events: [],
     loading: false,
-    lastError: null,
+    error: null,
   }),
-  getters: {
-    pendingEvents: state => state.events.filter(event => event.status !== 'acknowledged'),
-    hasPendingEvents: state => state.events.some(event => event.status !== 'acknowledged'),
-  },
   actions: {
     async refresh(sessionId: string) {
       this.loading = true
-      this.lastError = null
+      this.error = null
       try {
         this.events = await getPrintEvents(sessionId)
       }
       catch (error) {
-        this.lastError = error instanceof Error ? error.message : 'Unable to load print events.'
+        this.error = error instanceof Error ? error.message : 'Failed to load print events.'
       }
       finally {
         this.loading = false
       }
     },
     async acknowledge(eventId: string) {
-      this.lastError = null
+      this.error = null
       try {
-        const updated = await ackPrintEvent(eventId)
-        const index = this.events.findIndex(event => event.id === eventId)
-        if (index >= 0)
-          this.events[index] = updated
-        else this.events.unshift(updated)
+        const result = await ackPrintEvent(eventId)
+        this.events = this.events.map((event) => {
+          if (event.id !== eventId)
+            return event
+          return {
+            ...event,
+            acknowledgedAt: result.acknowledgedAt || new Date().toISOString(),
+          }
+        })
       }
       catch (error) {
-        this.lastError = error instanceof Error ? error.message : 'Unable to acknowledge print event.'
-        throw error
+        this.error = error instanceof Error ? error.message : 'Failed to acknowledge print event.'
       }
     },
+    upsert(event: PrintEvent) {
+      this.events = mergePrintEvents(this.events, event)
+    },
     clear() {
-      this.events = []
-      this.loading = false
-      this.lastError = null
+      this.$patch({ events: [], loading: false, error: null })
     },
   },
 })

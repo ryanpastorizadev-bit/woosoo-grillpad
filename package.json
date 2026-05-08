@@ -10,7 +10,7 @@
     "preview": "nuxt preview --host 0.0.0.0",
     "lint": "eslint .",
     "typecheck": "nuxt prepare && vue-tsc --noEmit",
-    "test": "vitest run",
+    "test": "nuxt prepare && vitest run",
     "test:watch": "vitest",
     "clean": "nuxi cleanup && rimraf .nuxt .output node_modules/.vite"
   },

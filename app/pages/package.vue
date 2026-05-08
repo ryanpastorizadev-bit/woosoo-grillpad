@@ -34,31 +34,37 @@ async function choose(packageId: string) {
 </script>
 
 <template>
-  <section class="mx-auto max-w-6xl py-10">
-    <h1 class="text-5xl font-black">
-      Choose Package
-    </h1>
-    <p v-if="errorMessage" class="mt-4 text-sm text-red-300">
-      {{ errorMessage }}
-    </p>
-    <div class="mt-8 grid grid-cols-2 gap-6">
-      <article v-for="pkg in menu.packages" :key="pkg.id" class="gp-card p-8">
-        <h2 class="text-3xl font-bold">
-          {{ pkg.name }}
-        </h2>
-        <p class="mt-3 text-white/60">
-          {{ pkg.description }}
-        </p>
-        <p class="mt-6 text-4xl font-black text-primary">
-          ₱{{ pkg.price }}
-        </p>
-        <AppButton class="mt-8 w-full" size="lg" :disabled="submitting" @click="choose(pkg.id)">
+  <AppScreen width="lg" class="py-10">
+    <AppSectionHeader title="Choose Package" />
+
+    <ErrorState v-if="errorMessage" class="mt-4" :message="errorMessage" />
+
+    <LoadingState
+      v-else-if="menu.loading"
+      class="mt-8"
+      title="Loading packages"
+      description="Fetching available grill packages for this table."
+    />
+
+    <EmptyState
+      v-else-if="menu.packages.length === 0"
+      class="mt-8"
+      title="No packages available"
+      description="There are no package options for this session yet."
+    />
+
+    <div v-else class="mt-8 grid grid-cols-2 gap-6">
+      <MenuItemCard
+        v-for="pkg in menu.packages"
+        :key="pkg.id"
+        :title="pkg.name"
+        :subtitle="pkg.description"
+        :price="pkg.price"
+      >
+        <AppButton class="w-full" size="lg" :disabled="submitting" @click="choose(pkg.id)">
           Select
         </AppButton>
-      </article>
+      </MenuItemCard>
     </div>
-    <p v-if="!menu.loading && menu.packages.length === 0" class="mt-6 text-sm text-white/60">
-      No packages available for this session.
-    </p>
-  </section>
+  </AppScreen>
 </template>

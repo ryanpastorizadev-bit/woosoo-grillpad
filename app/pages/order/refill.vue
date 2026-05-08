@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { MenuItem } from '~/types/order'
 import { submitRefillOrder } from '~/services/api/orders'
 import { canSubmitRefillOrder } from '~/utils/submission'
 
@@ -7,7 +8,9 @@ const cart = useCartStore()
 const menu = useMenuStore()
 const session = useSessionStore()
 const order = useOrderStore()
+
 const items = computed(() => menu.visibleItems)
+const quantityById = computed(() => new Map(cart.refillCart.map(item => [item.id, item.quantity])))
 
 const errorMessage = ref<string | null>(null)
 
@@ -28,6 +31,18 @@ onMounted(async () => {
     errorMessage.value = error instanceof Error ? error.message : 'Failed to load refill menu.'
   }
 })
+
+function quantityFor(itemId: string) {
+  return quantityById.value.get(itemId) ?? 0
+}
+
+function increment(item: MenuItem) {
+  cart.add(item)
+}
+
+function decrement(itemId: string) {
+  cart.remove(itemId)
+}
 
 async function submitRefill() {
   if (order.submitting)
@@ -65,39 +80,55 @@ async function submitRefill() {
 </script>
 
 <template>
-  <section class="mx-auto max-w-7xl py-8">
-    <div class="gp-card border-primary/30 p-6">
-      <p class="text-sm uppercase tracking-[.25em] text-primary">
-        Refill Mode
-      </p>
-      <h1 class="mt-2 text-4xl font-black">
-        Sides and modifiers only
-      </h1>
-      <p class="mt-2 text-white/55">
-        Full menu and package changes are locked after initial order.
-      </p>
+  <AppScreen>
+    <AppCard class="border-primary/30 p-6">
+      <AppSectionHeader
+        kicker="Refill Mode"
+        title="Sides and modifiers only"
+        subtitle="Full menu and package changes are locked after initial order."
+      />
+    </AppCard>
+
+    <ErrorState
+      v-if="errorMessage || order.lastError"
+      class="mt-4"
+      :message="errorMessage || order.lastError"
+    />
+
+    <LoadingState
+      v-else-if="menu.loading && items.length === 0"
+      class="mt-8"
+      title="Loading refill items"
+      description="Fetching refill-eligible menu options."
+    />
+
+    <EmptyState
+      v-else-if="items.length === 0"
+      class="mt-8"
+      title="No refill items"
+      description="Only refill-eligible items are available in this phase."
+    />
+
+    <div v-else class="mt-8 grid grid-cols-3 gap-5">
+      <MenuItemCard
+        v-for="item in items"
+        :key="item.id"
+        :title="item.name"
+        :subtitle="item.refillGroup"
+        badge="Refill"
+      >
+        <QuantityStepper
+          :value="quantityFor(item.id)"
+          @increment="increment(item)"
+          @decrement="decrement(item.id)"
+        />
+      </MenuItemCard>
     </div>
-    <p v-if="errorMessage || order.lastError" class="mt-4 text-sm text-red-300">
-      {{ errorMessage || order.lastError }}
-    </p>
-    <div class="mt-8 grid grid-cols-3 gap-5">
-      <article v-for="item in items" :key="item.id" class="gp-card p-6">
-        <h2 class="text-2xl font-bold">
-          {{ item.name }}
-        </h2>
-        <p class="mt-2 text-sm text-white/45">
-          {{ item.refillGroup }}
-        </p>
-        <AppButton class="mt-6 w-full" @click="cart.add(item)">
-          Add Refill
-        </AppButton>
-      </article>
-    </div>
-    <p v-if="!menu.loading && items.length === 0" class="mt-6 text-sm text-white/60">
-      Only refill-eligible items are available in this phase.
-    </p>
-    <AppButton class="mt-8" size="lg" :disabled="!canSubmitRefillOrder(order.submitting, session.sessionId, session.initialOrderId, cart.refillCount)" @click="submitRefill">
-      {{ order.submitting ? 'Submitting...' : 'Submit Refill' }}
-    </AppButton>
-  </section>
+
+    <BottomActionBar>
+      <AppButton class="w-full sm:w-auto" size="lg" :disabled="!canSubmitRefillOrder(order.submitting, session.sessionId, session.initialOrderId, cart.refillCount)" @click="submitRefill">
+        {{ order.submitting ? 'Submitting...' : 'Submit Refill' }}
+      </AppButton>
+    </BottomActionBar>
+  </AppScreen>
 </template>

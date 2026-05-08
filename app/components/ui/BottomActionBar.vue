@@ -3,24 +3,19 @@ import { computed } from 'vue'
 import { cn } from '~/utils/cn'
 
 const props = withDefaults(defineProps<{
-  width?: 'md' | 'lg' | 'xl'
   class?: string
 }>(), {
-  width: 'xl',
   class: undefined,
 })
 
 const classes = computed(() => cn(
-  'mx-auto w-full py-8',
-  props.width === 'md' && 'max-w-4xl',
-  props.width === 'lg' && 'max-w-6xl',
-  props.width === 'xl' && 'max-w-7xl',
+  'sticky bottom-4 z-20 mt-8 flex items-center justify-end gap-3 rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur',
   props.class,
 ))
 </script>
 
 <template>
-  <section :class="classes">
+  <div :class="classes">
     <slot />
-  </section>
+  </div>
 </template>

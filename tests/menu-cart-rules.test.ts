@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { assertItemAllowedForCart } from '~/stores/cart'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { assertItemAllowedForCart, useCartStore } from '~/stores/cart'
 import { getVisibleMenuItems } from '~/stores/menu'
-import { useCartStore } from '~/stores/cart'
 
 describe('menu and cart workflow rules', () => {
   beforeEach(() => {
@@ -22,7 +21,7 @@ describe('menu and cart workflow rules', () => {
           price: 0,
           availableForInitial: false,
           availableForRefill: true,
-          refillGroup: 'side',
+          refillGroup: 'side' as const,
           isActive: true,
         },
         {
@@ -33,7 +32,7 @@ describe('menu and cart workflow rules', () => {
           price: 0,
           availableForInitial: true,
           availableForRefill: true,
-          refillGroup: 'none',
+          refillGroup: 'none' as const,
           isActive: true,
         },
         {
@@ -44,7 +43,7 @@ describe('menu and cart workflow rules', () => {
           price: 0,
           availableForInitial: true,
           availableForRefill: true,
-          refillGroup: 'modifier',
+          refillGroup: 'modifier' as const,
           isActive: false,
         },
       ],

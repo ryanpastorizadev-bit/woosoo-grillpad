@@ -2,10 +2,15 @@
 const update = useUpdateStore()
 const session = useSessionStore()
 const visible = computed(() => update.updateAvailable && session.isActive)
+const positionClass = computed(() => (session.isActive ? 'bottom-44' : 'bottom-6'))
 </script>
 
 <template>
-  <div v-if="visible" class="fixed inset-x-6 bottom-6 z-50 rounded-2xl border border-primary/40 bg-panel/95 p-4 shadow-2xl backdrop-blur">
+  <div
+    v-if="visible"
+    :class="positionClass"
+    class="fixed inset-x-6 z-50 rounded-2xl border border-primary/40 bg-panel/95 p-4 shadow-2xl backdrop-blur"
+  >
     <div class="flex items-center justify-between gap-4">
       <div>
         <p class="font-bold text-primary">

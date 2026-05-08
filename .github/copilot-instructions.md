@@ -119,6 +119,12 @@
 - no fake order IDs
 - no UI-owned workflow logic
 
+## Issue & PR dependency workflow
+- Check each issue for blockers/dependencies before starting implementation.
+- Prioritize safe, unblocked issues first (for example, issues with no backend dependency).
+- Do not merge while related PR checks are failing; wait until all required PR checks are green.
+- Keep the local working branch updated with the latest target branch changes before final validation and merge.
+
 ## Avoiding prototype drift
 - avoid giant conditional pages
 - avoid duplicated styles

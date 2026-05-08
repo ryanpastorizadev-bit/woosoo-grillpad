@@ -25,11 +25,9 @@ async function bootstrapSession() {
   device.restoreFromStorage()
   session.restoreFromStorage()
 
-  // Load POS context — fall back to mock if backend is unavailable.
-  try {
-    await posContext.refresh()
-  }
-  catch {
+  // Load POS context — fall back to mock when backend is unavailable or returns no data.
+  await posContext.refresh()
+  if (posContext.readiness === null) {
     posContext.enableMock()
   }
 

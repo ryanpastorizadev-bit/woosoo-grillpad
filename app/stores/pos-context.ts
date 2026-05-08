@@ -90,7 +90,7 @@ export const usePosContextStore = defineStore('pos-context', {
         const rows = await fetchPosTables()
         this.tables = rows.map(t => ({
           ...t,
-          normalizedStatus: normalizeTableStatus(t.normalizedStatus),
+          normalizedStatus: normalizeTableStatus(t.rawStatus),
         }))
       }
       catch (error) {

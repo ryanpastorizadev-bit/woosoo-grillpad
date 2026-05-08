@@ -53,13 +53,13 @@ function configForStatus(status: string): StatusConfig {
 
 const sortedTables = computed(() => {
   return [...props.tables]
-    .map(t => ({ t, n: Number.parseInt(t.id, 10) }))
+    .map(table => ({ table, numericId: Number.parseInt(table.id, 10) }))
     .sort((a, b) => {
-      if (!Number.isNaN(a.n) && !Number.isNaN(b.n))
-        return a.n - b.n
-      return a.t.name.localeCompare(b.t.name)
+      if (!Number.isNaN(a.numericId) && !Number.isNaN(b.numericId))
+        return a.numericId - b.numericId
+      return a.table.name.localeCompare(b.table.name)
     })
-    .map(({ t }) => t)
+    .map(({ table }) => table)
 })
 
 const legendEntries = computed(() => {

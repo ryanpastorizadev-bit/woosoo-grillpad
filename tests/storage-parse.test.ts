@@ -77,6 +77,7 @@ describe('device registration contract', () => {
       device: { id: 123, name: 'kiosk-5' },
       token: 'bearer-token',
       table: { id: 5, name: 'Table 5' },
+      broadcasting: { key: 'app-key', host: '127.0.0.1', port: 8080, scheme: 'ws' },
     })
 
     expect(mapRegistrationToDeviceState(response)).toEqual({

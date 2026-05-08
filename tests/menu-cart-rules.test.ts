@@ -1,8 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
 import { assertItemAllowedForCart } from '~/stores/cart'
 import { getVisibleMenuItems } from '~/stores/menu'
+import { useCartStore } from '~/stores/cart'
 
 describe('menu and cart workflow rules', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
   it('hides non-refill entries from refill mode visibility', () => {
     const state = {
       packages: [],
@@ -62,5 +68,71 @@ describe('menu and cart workflow rules', () => {
       refillGroup: 'none',
       isActive: true,
     })).toThrow('Item is not allowed during refill.')
+  })
+
+  it('clearInitialCart clears only initial cart', () => {
+    const store = useCartStore()
+    store.initialCart = [{
+      id: 'initial-1',
+      name: 'Item',
+      categoryId: 'main',
+      packageIds: [],
+      price: 0,
+      availableForInitial: true,
+      availableForRefill: false,
+      refillGroup: 'none',
+      isActive: true,
+      quantity: 2,
+    }]
+    store.refillCart = [{
+      id: 'refill-1',
+      name: 'Refill',
+      categoryId: 'side',
+      packageIds: [],
+      price: 0,
+      availableForInitial: false,
+      availableForRefill: true,
+      refillGroup: 'side',
+      isActive: true,
+      quantity: 1,
+    }]
+
+    store.clearInitialCart()
+
+    expect(store.initialCart).toEqual([])
+    expect(store.refillCart).toHaveLength(1)
+  })
+
+  it('clear without kind clears both carts', () => {
+    const store = useCartStore()
+    store.initialCart = [{
+      id: 'initial-1',
+      name: 'Item',
+      categoryId: 'main',
+      packageIds: [],
+      price: 0,
+      availableForInitial: true,
+      availableForRefill: false,
+      refillGroup: 'none',
+      isActive: true,
+      quantity: 1,
+    }]
+    store.refillCart = [{
+      id: 'refill-1',
+      name: 'Refill',
+      categoryId: 'side',
+      packageIds: [],
+      price: 0,
+      availableForInitial: false,
+      availableForRefill: true,
+      refillGroup: 'side',
+      isActive: true,
+      quantity: 1,
+    }]
+
+    store.clear()
+
+    expect(store.initialCart).toEqual([])
+    expect(store.refillCart).toEqual([])
   })
 })

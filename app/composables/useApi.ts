@@ -1,4 +1,12 @@
 import type { z } from 'zod'
+import { $fetch } from 'ofetch'
+
+// Explicit imports due to Nuxt auto-import issues
+declare global {
+  const useRuntimeConfig: () => any
+  const useDeviceStore: () => any
+  const navigateTo: (path: string) => Promise<void>
+}
 
 interface ApiErrorPayload {
   message?: string
@@ -34,13 +42,13 @@ export function useApi() {
     retry: 1,
     timeout: 12000,
     headers: { Accept: 'application/json' },
-    onRequest({ options }) {
+    onRequest({ options }: { options: any }) {
       if (device.token) {
         options.headers = new Headers(options.headers)
         options.headers.set('Authorization', `Bearer ${device.token}`)
       }
     },
-    async onResponseError({ response }) {
+    async onResponseError({ response }: { response: any }) {
       const message = readApiErrorMessage(response._data) || 'Request failed.'
       const code = typeof response._data === 'object' && response._data && 'code' in response._data
         ? String(response._data.code)

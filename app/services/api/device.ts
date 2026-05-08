@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { API_ENDPOINTS } from './endpoints'
+import { useApi } from '~/composables/useApi'
 
 const IdToStringSchema = z.union([z.string(), z.number()]).pipe(z.coerce.string())
 

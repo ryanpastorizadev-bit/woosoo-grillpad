@@ -1,5 +1,6 @@
 import type { PrintEvent } from '~/types/order'
 import { z } from 'zod'
+import { useApi } from '~/composables/useApi'
 
 const PrintEventSchema = z.object({
   id: z.string(),

@@ -1,5 +1,6 @@
 import type { ActiveOrder } from '~/types/order'
 import { z } from 'zod'
+import { useApi } from '~/composables/useApi'
 
 const ActiveOrderItemSchema = z.object({
   id: z.string(),

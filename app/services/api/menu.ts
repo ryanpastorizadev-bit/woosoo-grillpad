@@ -1,6 +1,7 @@
 import type { PackageSummary } from '~/types/order'
 import { z } from 'zod'
 import { API_ENDPOINTS } from './endpoints'
+import { useApi } from '~/composables/useApi'
 
 const MenuItemSchema = z.object({
   id: z.string(),

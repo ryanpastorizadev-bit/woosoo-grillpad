@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { API_ENDPOINTS } from './endpoints'
+import { useApi } from '~/composables/useApi'
 
 const StartSessionResponseSchema = z.object({
   sessionId: z.string(),

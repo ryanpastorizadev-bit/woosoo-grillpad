@@ -17,7 +17,7 @@ describe('menu and cart workflow rules', () => {
           availableForInitial: false,
           availableForRefill: true,
           refillGroup: 'side',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'item-refill-none',
@@ -28,7 +28,7 @@ describe('menu and cart workflow rules', () => {
           availableForInitial: true,
           availableForRefill: true,
           refillGroup: 'none',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'item-refill-inactive',
@@ -39,11 +39,11 @@ describe('menu and cart workflow rules', () => {
           availableForInitial: true,
           availableForRefill: true,
           refillGroup: 'modifier',
-          isActive: false
-        }
+          isActive: false,
+        },
       ],
       loading: false,
-      error: null
+      error: null,
     }
 
     const visible = getVisibleMenuItems('refill', state, null)
@@ -60,7 +60,7 @@ describe('menu and cart workflow rules', () => {
       availableForInitial: true,
       availableForRefill: false,
       refillGroup: 'none',
-      isActive: true
+      isActive: true,
     })).toThrow('Item is not allowed during refill.')
   })
 })

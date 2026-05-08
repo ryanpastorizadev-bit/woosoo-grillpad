@@ -1,4 +1,4 @@
-export type SessionPhase = 'unregistered' | 'package_selection' | 'initial_order' | 'refill' | 'ended'
+export type SessionPhase = 'unregistered' | 'package_selection' | 'initial_order' | 'review' | 'refill' | 'ended'
 
 export interface PackageSummary {
   id: string
@@ -31,4 +31,16 @@ export interface OrderSessionState {
   phase: SessionPhase
   initialOrderId: string | null
   initialOrderSubmittedAt: string | null
+}
+
+export type PrintEventStatus = 'pending' | 'printed' | 'acknowledged' | 'failed'
+
+export interface PrintEvent {
+  id: string
+  orderId: string
+  type: string
+  status: PrintEventStatus
+  message?: string
+  createdAt: string
+  acknowledgedAt?: string | null
 }

@@ -13,11 +13,12 @@ const DeviceStateSchema = z.object({
   token: z.string().nullable(),
   deviceId: z.string().nullable(),
   tableId: z.string().nullable(),
-  tableName: z.string().nullable()
+  tableName: z.string().nullable(),
 })
 
 function persistDeviceState(state: DeviceState) {
-  if (!import.meta.client) return
+  if (!import.meta.client)
+    return
   localStorage.setItem(DEVICE_STORAGE_KEY, JSON.stringify(state))
 }
 
@@ -34,9 +35,11 @@ export const useDeviceStore = defineStore('device', {
       persistDeviceState(this.$state)
     },
     restoreFromStorage() {
-      if (!import.meta.client) return false
+      if (!import.meta.client)
+        return false
       const raw = localStorage.getItem(DEVICE_STORAGE_KEY)
-      if (!raw) return false
+      if (!raw)
+        return false
       try {
         const parsed = parseDeviceState(raw)
         this.$patch(parsed)
@@ -51,6 +54,6 @@ export const useDeviceStore = defineStore('device', {
     clearDevice() {
       this.$reset()
       persistDeviceState(this.$state)
-    }
-  }
+    },
+  },
 })

@@ -4,5 +4,11 @@ export default antfu({
   vue: true,
   typescript: true,
   stylistic: { semi: false, quotes: 'single' },
-  ignores: ['.nuxt', '.output', 'node_modules']
+  ignores: [
+    '.agents/**',
+    '.nuxt/**',
+    '.output/**',
+    'dist/**',
+    'node_modules/**',
+  ],
 })

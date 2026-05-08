@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import type { MenuItem, PackageSummary, SessionPhase } from '~/types/order'
+import { defineStore } from 'pinia'
 import { fetchInitialMenu, fetchPackages, fetchRefillMenu } from '~/services/api/menu'
 
 interface MenuState {
@@ -12,13 +12,13 @@ interface MenuState {
 
 export function getVisibleMenuItems(phase: SessionPhase, state: MenuState, packageId: string | null): MenuItem[] {
   if (phase === 'initial_order') {
-    return state.initialMenu.filter(item => {
+    return state.initialMenu.filter((item) => {
       return item.isActive && item.availableForInitial && (!packageId || item.packageIds.includes(packageId))
     })
   }
 
   if (phase === 'refill') {
-    return state.refillMenu.filter(item => {
+    return state.refillMenu.filter((item) => {
       return item.isActive && item.availableForRefill && item.refillGroup !== 'none'
     })
   }
@@ -32,13 +32,13 @@ export const useMenuStore = defineStore('menu', {
     initialMenu: [],
     refillMenu: [],
     loading: false,
-    error: null
+    error: null,
   }),
   getters: {
     visibleItems(state): MenuItem[] {
       const session = useSessionStore()
       return getVisibleMenuItems(session.phase, state, session.packageId)
-    }
+    },
   },
   actions: {
     async loadPackages() {
@@ -82,6 +82,6 @@ export const useMenuStore = defineStore('menu', {
       finally {
         this.loading = false
       }
-    }
-  }
+    },
+  },
 })

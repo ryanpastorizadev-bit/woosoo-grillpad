@@ -1,12 +1,13 @@
 <script setup lang="ts">
 const session = useSessionStore()
-const shellClass = computed(() => (session.isActive ? 'grillpad-shell min-h-dvh p-6 pb-44' : 'grillpad-shell min-h-dvh p-6'))
+const showServiceRequestBar = computed(() => session.isOrderingPhase)
+const shellClass = computed(() => (showServiceRequestBar.value ? 'grillpad-shell min-h-dvh p-6 pb-44' : 'grillpad-shell min-h-dvh p-6'))
 </script>
 
 <template>
   <main :class="shellClass">
     <slot />
-    <ServiceRequestBar v-if="session.isActive" />
+    <ServiceRequestBar v-if="showServiceRequestBar" />
     <UpdateAvailableBanner />
   </main>
 </template>

@@ -14,7 +14,7 @@ const emit = defineEmits<{
 const isPending = computed(() => props.item.status === 'pending')
 
 const classes = computed(() => cn(
-  'min-h-12 min-w-34 rounded-2xl border px-4 py-2 text-sm font-semibold transition',
+  'min-h-14 min-w-34 rounded-2xl border px-4 py-2 text-sm font-semibold transition',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70',
   isPending.value && 'border-primary/40 bg-primary/15 text-primary',
   props.item.status === 'idle' && 'border-white/10 bg-white/5 text-white hover:bg-white/10',

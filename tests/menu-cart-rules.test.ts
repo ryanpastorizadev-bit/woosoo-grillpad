@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { assertItemAllowedForCart } from '~/stores/cart'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { assertItemAllowedForCart, useCartStore } from '~/stores/cart'
 import { getVisibleMenuItems } from '~/stores/menu'
-import { useCartStore } from '~/stores/cart'
+import { useSessionStore } from '~/stores/session'
 
 describe('menu and cart workflow rules', () => {
   beforeEach(() => {
@@ -133,6 +133,82 @@ describe('menu and cart workflow rules', () => {
     store.clear()
 
     expect(store.initialCart).toEqual([])
+    expect(store.refillCart).toEqual([])
+  })
+
+  it('item quantity totals are enforced in cart counts', () => {
+    const store = useCartStore()
+    store.initialCart = [{
+      id: 'initial-1',
+      name: 'Item',
+      categoryId: 'main',
+      packageIds: ['pkg-1'],
+      price: 0,
+      availableForInitial: true,
+      availableForRefill: false,
+      refillGroup: 'none',
+      isActive: true,
+      quantity: 2,
+    }]
+    store.refillCart = [{
+      id: 'refill-1',
+      name: 'Refill',
+      categoryId: 'side',
+      packageIds: [],
+      price: 0,
+      availableForInitial: false,
+      availableForRefill: true,
+      refillGroup: 'side',
+      isActive: true,
+      quantity: 3,
+    }]
+    expect(store.initialCount).toBe(2)
+    expect(store.refillCount).toBe(3)
+  })
+
+  it('initial cart clears after initial submission transition', () => {
+    const session = useSessionStore()
+    const store = useCartStore()
+    session.start('table-1', 'session-1')
+    session.setPackage('pkg-1')
+
+    store.initialCart = [{
+      id: 'initial-1',
+      name: 'Item',
+      categoryId: 'main',
+      packageIds: ['pkg-1'],
+      price: 0,
+      availableForInitial: true,
+      availableForRefill: false,
+      refillGroup: 'none',
+      isActive: true,
+      quantity: 1,
+    }]
+
+    session.markInitialOrderSubmitted('order-1')
+    store.clearInitialCart()
+
+    expect(session.phase).toBe('refill')
+    expect(store.initialCart).toEqual([])
+  })
+
+  it('refill cart clears after refill submission', () => {
+    const store = useCartStore()
+    store.refillCart = [{
+      id: 'refill-1',
+      name: 'Refill',
+      categoryId: 'side',
+      packageIds: [],
+      price: 0,
+      availableForInitial: false,
+      availableForRefill: true,
+      refillGroup: 'side',
+      isActive: true,
+      quantity: 1,
+    }]
+
+    store.clearRefillCart()
+
     expect(store.refillCart).toEqual([])
   })
 })

@@ -51,33 +51,19 @@ async function submitInitial() {
 </script>
 
 <template>
-  <section class="mx-auto max-w-7xl py-8">
-    <div class="flex items-end justify-between gap-6">
-      <div>
-        <p class="text-primary/80">
-          Review
-        </p>
-        <h1 class="text-5xl font-black">
-          Confirm your initial order
-        </h1>
-      </div>
+  <AppScreen>
+    <AppSectionHeader kicker="Review" title="Confirm your initial order" />
+    <ErrorState v-if="order.lastError" class="mt-4" :message="order.lastError" />
+    <div class="mt-8">
+      <CartSummaryPanel :count="cart.initialCount" :items="cart.initialCart" />
+    </div>
+    <BottomActionBar>
+      <p class="text-sm text-white/70">
+        Items: {{ cart.initialCount }}
+      </p>
       <AppButton size="lg" :disabled="!canSubmitInitialOrder(order.submitting, session.sessionId, session.packageId, cart.initialCount)" @click="submitInitial">
         {{ order.submitting ? 'Submitting...' : 'Submit Initial Order' }}
       </AppButton>
-    </div>
-    <p v-if="order.lastError" class="mt-4 text-sm text-red-300">
-      {{ order.lastError }}
-    </p>
-
-    <div class="mt-8 gp-card p-6">
-      <p class="text-sm text-white/60">
-        Items: {{ cart.initialCount }}
-      </p>
-      <ul class="mt-4 space-y-2 text-sm text-white/70">
-        <li v-for="item in cart.initialCart" :key="item.id">
-          {{ item.name }} x{{ item.quantity }}
-        </li>
-      </ul>
-    </div>
-  </section>
+    </BottomActionBar>
+  </AppScreen>
 </template>

@@ -73,7 +73,12 @@ describe('storage parsing', () => {
   })
 
   it('invalid stored state payloads are rejected safely', () => {
-    expect(() => parseDeviceState('{invalid json')).toThrow()
+    expect(() => parseDeviceState(JSON.stringify({
+      token: 'token-1',
+      deviceId: 'device-1',
+      tableId: 123,
+      tableName: 'A1',
+    }))).toThrow()
     expect(() => parseSessionState(JSON.stringify({
       sessionId: 'session-1',
       tableId: 'table-1',

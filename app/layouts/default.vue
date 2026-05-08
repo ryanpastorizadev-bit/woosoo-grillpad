@@ -7,6 +7,7 @@ const shellClass = computed(() => (session.isActive ? 'grillpad-shell min-h-dvh 
   <main :class="shellClass">
     <slot />
     <ServiceRequestBar v-if="session.isActive" />
+    <NetworkStatusBanner />
     <UpdateAvailableBanner />
   </main>
 </template>

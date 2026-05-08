@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useSessionStore } from '~/stores/session'
+import { useUpdateStore } from '~/stores/update'
+
 const update = useUpdateStore()
 const session = useSessionStore()
 const visible = computed(() => update.updateAvailable && session.isActive)

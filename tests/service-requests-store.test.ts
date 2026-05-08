@@ -1,5 +1,5 @@
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { useServiceRequestsStore } from '~/stores/service-requests'
 
 describe('service requests store', () => {
@@ -10,49 +10,53 @@ describe('service requests store', () => {
   it('starts with all requests idle', () => {
     const store = useServiceRequestsStore()
 
-    expect(store.items).toHaveLength(6)
-    expect(store.items.every(item => item.status === 'idle')).toBe(true)
-    expect(store.hasPending).toBe(false)
+    expect(store.items).toHaveLength(5)
+    expect(store.items.every(item => !item.selected)).toBe(true)
+    expect(store.hasSelection).toBe(false)
+    expect(store.backendReady).toBe(false)
+    expect(store.selectedTypes).toEqual([])
   })
 
-  it('marks request as pending then auto-resolves to success', () => {
-    vi.useFakeTimers()
+  it('toggles requests locally without creating fake success states', () => {
     const store = useServiceRequestsStore()
 
-    const triggered = store.request('water', { autoResolve: true, delayMs: 300 })
+    const toggled = store.toggle('water')
     const item = store.items.find(request => request.type === 'water')
 
-    expect(triggered).toBe(true)
-    expect(item?.status).toBe('pending')
-    expect(store.hasPending).toBe(true)
+    expect(toggled).toBe(true)
+    expect(item?.selected).toBe(true)
+    expect(store.hasSelection).toBe(true)
+    expect(store.selectionCount).toBe(1)
+    expect(store.selectedTypes).toEqual(['water'])
 
-    vi.advanceTimersByTime(350)
+    store.toggle('water')
 
-    expect(item?.status).toBe('success')
-    expect(store.hasPending).toBe(false)
-    vi.useRealTimers()
+    expect(item?.selected).toBe(false)
+    expect(store.hasSelection).toBe(false)
   })
 
-  it('rejects duplicate request while pending', () => {
+  it('supports multiple selections and clearing a single request', () => {
     const store = useServiceRequestsStore()
-    const first = store.request('billing', { autoResolve: false })
-    const second = store.request('billing', { autoResolve: false })
+    store.toggle('billing')
+    store.toggle('call_staff')
 
-    expect(first).toBe(true)
-    expect(second).toBe(false)
+    expect(store.selectionCount).toBe(2)
+    expect(store.selectedTypes).toEqual(['billing', 'call_staff'])
+
+    const cleared = store.clear('billing')
+
+    expect(cleared).toBe(true)
+    expect(store.selectedTypes).toEqual(['call_staff'])
   })
 
-  it('supports error resolution and clear', () => {
+  it('resets the full local selection state', () => {
     const store = useServiceRequestsStore()
-    store.request('call_staff', { autoResolve: false })
+    store.toggle('clean_table')
+    store.toggle('extra_utensils')
 
-    store.resolve('call_staff', { succeed: false })
-    let item = store.items.find(request => request.type === 'call_staff')
-    expect(item?.status).toBe('error')
+    store.resetAll()
 
-    store.clear('call_staff')
-    item = store.items.find(request => request.type === 'call_staff')
-    expect(item?.status).toBe('idle')
-    expect(item?.message).toBeNull()
+    expect(store.hasSelection).toBe(false)
+    expect(store.items.every(item => !item.selected)).toBe(true)
   })
 })

@@ -1,13 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ middleware: ['session-phase'] })
 const session = useSessionStore()
-const update = useUpdateStore()
-
-onMounted(() => {
-  if (update.updateAvailable && !update.isApplyingUpdate) {
-    update.applyUpdate()
-  }
-})
 
 function returnToStart() {
   session.reset()

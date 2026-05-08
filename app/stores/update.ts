@@ -5,12 +5,16 @@ let applyHandler: (() => void) | null = null
 interface UpdateState {
   updateAvailable: boolean
   isApplyingUpdate: boolean
+  isOffline: boolean
+  showReconnect: boolean
 }
 
 export const useUpdateStore = defineStore('update', {
   state: (): UpdateState => ({
     updateAvailable: false,
     isApplyingUpdate: false,
+    isOffline: false,
+    showReconnect: false,
   }),
   actions: {
     registerApplyHandler(handler: () => void) {
@@ -21,6 +25,18 @@ export const useUpdateStore = defineStore('update', {
     },
     clearUpdateAvailable() {
       this.updateAvailable = false
+    },
+    setOnlineStatus(isOnline: boolean) {
+      const wasOffline = this.isOffline
+      this.isOffline = !isOnline
+      if (!isOnline) {
+        this.showReconnect = false
+        return
+      }
+      this.showReconnect = wasOffline
+    },
+    clearReconnectStatus() {
+      this.showReconnect = false
     },
     applyUpdate() {
       if (!this.updateAvailable || this.isApplyingUpdate)

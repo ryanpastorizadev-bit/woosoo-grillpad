@@ -1,8 +1,17 @@
 <script setup lang="ts">
 const update = useUpdateStore()
 const session = useSessionStore()
-const visible = computed(() => update.updateAvailable && session.isActive)
-const positionClass = computed(() => (session.isActive ? 'bottom-44' : 'bottom-6'))
+const visible = computed(() => update.updateAvailable)
+const positionClass = computed(() => {
+  const hasNetworkBanner = update.isOffline || update.showReconnect
+  if (session.isActive) {
+    return hasNetworkBanner ? 'bottom-60' : 'bottom-44'
+  }
+  return hasNetworkBanner ? 'bottom-24' : 'bottom-6'
+})
+const message = computed(() => session.isActive
+  ? 'The new UI will apply after the current dining session ends.'
+  : 'Reload is safe now. No active dining session will be interrupted.')
 </script>
 
 <template>
@@ -17,12 +26,17 @@ const positionClass = computed(() => (session.isActive ? 'bottom-44' : 'bottom-6
           Update ready
         </p>
         <p class="text-sm text-white/60">
-          The new UI will apply after the current dining session ends.
+          {{ message }}
         </p>
       </div>
-      <GpButton variant="ghost" @click="update.clearUpdateAvailable()">
-        Dismiss
-      </GpButton>
+      <div class="flex items-center gap-2">
+        <GpButton v-if="!session.isActive" variant="primary" @click="update.applyUpdate()">
+          Reload now
+        </GpButton>
+        <GpButton variant="ghost" @click="update.clearUpdateAvailable()">
+          Dismiss
+        </GpButton>
+      </div>
     </div>
   </div>
 </template>

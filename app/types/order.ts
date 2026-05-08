@@ -1,4 +1,4 @@
-export type SessionPhase = 'unregistered' | 'package_selection' | 'initial_order' | 'refill' | 'ended'
+export type SessionPhase = 'unregistered' | 'package_selection' | 'initial_order' | 'review' | 'refill' | 'ended'
 
 export interface PackageSummary {
   id: string

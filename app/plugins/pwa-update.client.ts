@@ -10,9 +10,8 @@ export default defineNuxtPlugin(() => {
       update.markUpdateAvailable()
       if (!session.isActive) {
         update.applyUpdate()
-        return
       }
-    }
+    },
   })
 
   update.registerApplyHandler(() => updateServiceWorker(true))
@@ -24,6 +23,6 @@ export default defineNuxtPlugin(() => {
         update.applyUpdate()
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 })

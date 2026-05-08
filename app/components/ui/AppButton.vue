@@ -14,7 +14,7 @@ const classes = computed(() => cn(
   props.variant === 'primary' && 'bg-primary text-primary-foreground shadow-[0_12px_30px_rgba(246,181,109,.22)]',
   props.variant === 'ghost' && 'border border-white/10 bg-white/5 text-white hover:bg-white/10',
   props.variant === 'danger' && 'bg-red-500 text-white',
-  props.class
+  props.class,
 ))
 </script>
 

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 
 export function useApi() {
   const config = useRuntimeConfig()
@@ -20,7 +20,7 @@ export function useApi() {
         device.clearDevice()
         await navigateTo('/start')
       }
-    }
+    },
   })
 
   function parse<T>(schema: z.ZodType<T>, payload: unknown): T {

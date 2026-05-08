@@ -1,6 +1,6 @@
+import type { PrintEvent } from '~/types/order'
 import { z } from 'zod'
 import { API_ENDPOINTS } from './endpoints'
-import type { PrintEvent } from '~/types/order'
 
 const PrintEventSchema = z.object({
   id: z.string(),

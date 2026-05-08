@@ -1,6 +1,6 @@
+import type { PrintEvent } from '~/types/order'
 import { defineStore } from 'pinia'
 import { ackPrintEvent, getPrintEvents } from '~/services/api/print-events'
-import type { PrintEvent } from '~/types/order'
 
 interface PrintEventsState {
   events: PrintEvent[]
@@ -37,7 +37,8 @@ export const usePrintEventsStore = defineStore('print-events', {
       try {
         const updated = await ackPrintEvent(eventId)
         const index = this.events.findIndex(event => event.id === eventId)
-        if (index >= 0) this.events[index] = updated
+        if (index >= 0)
+          this.events[index] = updated
         else this.events.unshift(updated)
       }
       catch (error) {

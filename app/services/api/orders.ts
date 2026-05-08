@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { API_ENDPOINTS } from './endpoints'
 
-const OrderItemPayloadSchema = z.object({
+export const OrderItemPayloadSchema = z.object({
   id: z.string(),
   quantity: z.number().int().positive(),
 })
@@ -18,10 +18,9 @@ const SubmitRefillResponseSchema = z.object({
 const ActiveOrderItemSchema = z.object({
   id: z.string(),
   name: z.string(),
-  quantity: z.number(),
+  quantity: z.number().int().positive(),
   status: z.string().optional(),
 })
-
 const ActiveOrderSchema = z.object({
   orderId: z.string(),
   sessionId: z.string(),
@@ -32,7 +31,7 @@ const ActiveOrderSchema = z.object({
   updatedAt: z.string().optional(),
 })
 
-export interface OrderItemPayload extends z.infer<typeof OrderItemPayloadSchema> {}
+export type OrderItemPayload = z.infer<typeof OrderItemPayloadSchema>
 
 export interface SubmitInitialOrderPayload extends Record<string, unknown> {
   sessionId: string

@@ -8,7 +8,7 @@ describe('storage parsing', () => {
       token: 'token-1',
       deviceId: 'device-1',
       tableId: 'table-1',
-      tableName: 'A1'
+      tableName: 'A1',
     }))
 
     expect(value.deviceId).toBe('device-1')
@@ -21,7 +21,7 @@ describe('storage parsing', () => {
       phase: 'invalid-phase',
       packageId: null,
       initialOrderId: null,
-      initialOrderSubmittedAt: null
+      initialOrderSubmittedAt: null,
     }))).toThrow()
   })
 

@@ -15,7 +15,7 @@ const registration = reactive({
   token: '',
   deviceId: '',
   tableId: '',
-  tableName: ''
+  tableName: '',
 })
 
 async function bootstrapSession() {
@@ -35,7 +35,7 @@ async function bootstrapSession() {
         phase: snapshot.phase,
         packageId: snapshot.packageId,
         initialOrderId: snapshot.initialOrderId,
-        initialOrderSubmittedAt: snapshot.initialOrderSubmittedAt
+        initialOrderSubmittedAt: snapshot.initialOrderSubmittedAt,
       })
 
       if (!['unregistered', 'ended'].includes(session.phase)) {
@@ -65,7 +65,8 @@ onMounted(async () => {
 })
 
 async function submitRegistration() {
-  if (submitting.value) return
+  if (submitting.value)
+    return
   errorMessage.value = null
   needsSessionVerification.value = false
   if (!registration.token || !registration.deviceId || !registration.tableId || !registration.tableName) {
@@ -79,7 +80,7 @@ async function submitRegistration() {
       token: registration.token,
       deviceId: registration.deviceId,
       tableId: registration.tableId,
-      tableName: registration.tableName
+      tableName: registration.tableName,
     })
 
     const started = await startSession({ tableId: registration.tableId })
@@ -100,16 +101,26 @@ async function submitRegistration() {
 <template>
   <section class="mx-auto grid min-h-[calc(100dvh-3rem)] max-w-6xl place-items-center">
     <div class="gp-card max-w-3xl p-10 text-center">
-      <p class="mb-4 text-sm uppercase tracking-[.35em] text-primary/80">Woosoo</p>
-      <h1 class="text-7xl font-black tracking-tight">GrillPad</h1>
-      <p class="mx-auto mt-5 max-w-xl text-lg text-white/65">Session-based tablet ordering for initial packages and controlled refills.</p>
+      <p class="mb-4 text-sm uppercase tracking-[.35em] text-primary/80">
+        Woosoo
+      </p>
+      <h1 class="text-7xl font-black tracking-tight">
+        GrillPad
+      </h1>
+      <p class="mx-auto mt-5 max-w-xl text-lg text-white/65">
+        Session-based tablet ordering for initial packages and controlled refills.
+      </p>
 
-      <p v-if="loading" class="mt-8 text-sm text-white/60">Loading session state...</p>
+      <p v-if="loading" class="mt-8 text-sm text-white/60">
+        Loading session state...
+      </p>
 
       <form v-else class="mt-8 space-y-4 text-left" @submit.prevent="submitRegistration">
         <div v-if="needsSessionVerification" class="rounded-lg border border-amber-300/40 bg-amber-300/10 p-3 text-sm text-amber-100">
           Existing cached session was not trusted because backend verification failed.
-          <AppButton class="mt-2" variant="ghost" type="button" @click="bootstrapSession">Retry verification</AppButton>
+          <AppButton class="mt-2" variant="ghost" type="button" @click="bootstrapSession">
+            Retry verification
+          </AppButton>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <label class="text-sm text-white/70">
@@ -131,14 +142,22 @@ async function submitRegistration() {
             <input v-model="registration.tableName" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
           </label>
         </div>
-        <p v-if="errorMessage" class="text-sm text-red-300">{{ errorMessage }}</p>
-        <AppButton type="submit" size="lg" class="w-full" :disabled="submitting">{{ submitting ? 'Starting...' : 'Start Dining' }}</AppButton>
+        <p v-if="errorMessage" class="text-sm text-red-300">
+          {{ errorMessage }}
+        </p>
+        <AppButton type="submit" size="lg" class="w-full" :disabled="submitting">
+          {{ submitting ? 'Starting...' : 'Start Dining' }}
+        </AppButton>
       </form>
 
       <div class="mt-4 text-center">
-        <p class="text-xs text-white/40">Session routes are phase-guarded and backend-validated.</p>
+        <p class="text-xs text-white/40">
+          Session routes are phase-guarded and backend-validated.
+        </p>
       </div>
-      <p class="mt-10 text-xs text-white/35">v{{ config.public.appVersion }}</p>
+      <p class="mt-10 text-xs text-white/35">
+        v{{ config.public.appVersion }}
+      </p>
     </div>
   </section>
 </template>

@@ -7,7 +7,7 @@ describe('session route guard', () => {
       phase: 'initial_order',
       isRegistered: false,
       initialCount: 0,
-      isActive: false
+      isActive: false,
     })
 
     expect(result).toEqual({ allowed: false, redirectTo: '/start' })
@@ -18,7 +18,7 @@ describe('session route guard', () => {
       phase: 'initial_order',
       isRegistered: true,
       initialCount: 0,
-      isActive: true
+      isActive: true,
     })
 
     expect(result).toEqual({ allowed: false, redirectTo: '/order/initial' })
@@ -29,13 +29,13 @@ describe('session route guard', () => {
       phase: 'refill',
       isRegistered: true,
       initialCount: 1,
-      isActive: true
+      isActive: true,
     })
 
     expect(result).toEqual({ allowed: true })
   })
 
-  it('maps ended phase back to start route', () => {
-    expect(routeForPhase('ended')).toBe('/start')
+  it('maps ended phase to session ended route', () => {
+    expect(routeForPhase('ended')).toBe('/session/ended')
   })
 })

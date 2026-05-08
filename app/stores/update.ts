@@ -10,7 +10,7 @@ interface UpdateState {
 export const useUpdateStore = defineStore('update', {
   state: (): UpdateState => ({
     updateAvailable: false,
-    isApplyingUpdate: false
+    isApplyingUpdate: false,
   }),
   actions: {
     registerApplyHandler(handler: () => void) {
@@ -23,11 +23,13 @@ export const useUpdateStore = defineStore('update', {
       this.updateAvailable = false
     },
     applyUpdate() {
-      if (!this.updateAvailable || this.isApplyingUpdate) return
-      if (!applyHandler) throw new Error('Update apply handler is not registered.')
+      if (!this.updateAvailable || this.isApplyingUpdate)
+        return
+      if (!applyHandler)
+        throw new Error('Update apply handler is not registered.')
 
       this.isApplyingUpdate = true
       applyHandler()
-    }
-  }
+    },
+  },
 })

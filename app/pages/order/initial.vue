@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { MenuItem } from '~/types/order'
+
 definePageMeta({ middleware: ['session-phase'] })
 const cart = useCartStore()
 const session = useSessionStore()
@@ -6,6 +8,7 @@ const menu = useMenuStore()
 const errorMessage = ref<string | null>(null)
 
 const items = computed(() => menu.visibleItems)
+const quantityById = computed(() => new Map(cart.initialCart.map(item => [item.id, item.quantity])))
 
 onMounted(async () => {
   if (!session.packageId) {
@@ -23,44 +26,62 @@ onMounted(async () => {
   }
 })
 
+function quantityFor(itemId: string) {
+  return quantityById.value.get(itemId) ?? 0
+}
+
+function increment(item: MenuItem) {
+  cart.add(item)
+}
+
+function decrement(itemId: string) {
+  cart.remove(itemId)
+}
+
 async function goToReview() {
   await navigateTo('/order/review')
 }
 </script>
 
 <template>
-  <section class="mx-auto max-w-7xl py-8">
-    <div class="flex items-end justify-between gap-6">
-      <div>
-        <p class="text-primary/80">
-          Initial Order
-        </p>
-        <h1 class="text-5xl font-black">
-          Build the first round
-        </h1>
-      </div>
+  <AppScreen>
+    <AppSectionHeader kicker="Initial Order" title="Build the first round" />
+
+    <ErrorState v-if="errorMessage" class="mt-4" :message="errorMessage" />
+
+    <LoadingState
+      v-else-if="menu.loading && items.length === 0"
+      class="mt-8"
+      title="Loading menu"
+      description="Preparing initial-order options."
+    />
+
+    <EmptyState
+      v-else-if="items.length === 0"
+      class="mt-8"
+      title="No items available"
+      description="No initial-order items are available for this package."
+    />
+
+    <div v-else class="mt-8 grid grid-cols-3 gap-5">
+      <MenuItemCard
+        v-for="item in items"
+        :key="item.id"
+        :title="item.name"
+        :subtitle="item.categoryId"
+      >
+        <QuantityStepper
+          :value="quantityFor(item.id)"
+          @increment="increment(item)"
+          @decrement="decrement(item.id)"
+        />
+      </MenuItemCard>
+    </div>
+
+    <BottomActionBar>
       <AppButton size="lg" :disabled="cart.initialCount === 0" @click="goToReview">
         Review Order
       </AppButton>
-    </div>
-    <p v-if="errorMessage" class="mt-4 text-sm text-red-300">
-      {{ errorMessage }}
-    </p>
-    <div class="mt-8 grid grid-cols-3 gap-5">
-      <article v-for="item in items" :key="item.id" class="gp-card p-6">
-        <h2 class="text-2xl font-bold">
-          {{ item.name }}
-        </h2>
-        <p class="mt-2 text-sm text-white/45">
-          {{ item.categoryId }}
-        </p>
-        <AppButton class="mt-6 w-full" @click="cart.add(item)">
-          Add
-        </AppButton>
-      </article>
-    </div>
-    <p v-if="!menu.loading && items.length === 0" class="mt-6 text-sm text-white/60">
-      No initial-order items available.
-    </p>
-  </section>
+    </BottomActionBar>
+  </AppScreen>
 </template>

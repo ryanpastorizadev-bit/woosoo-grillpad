@@ -51,15 +51,16 @@ function configForStatus(status: string): StatusConfig {
   return STATUS_CONFIG[status as TableStatus] ?? STATUS_CONFIG.unknown
 }
 
-const sortedTables = computed(() =>
-  [...props.tables].sort((a, b) => {
-    const na = Number.parseInt(a.id, 10)
-    const nb = Number.parseInt(b.id, 10)
-    if (!Number.isNaN(na) && !Number.isNaN(nb))
-      return na - nb
-    return a.name.localeCompare(b.name)
-  }),
-)
+const sortedTables = computed(() => {
+  return [...props.tables]
+    .map(t => ({ t, n: Number.parseInt(t.id, 10) }))
+    .sort((a, b) => {
+      if (!Number.isNaN(a.n) && !Number.isNaN(b.n))
+        return a.n - b.n
+      return a.t.name.localeCompare(b.t.name)
+    })
+    .map(({ t }) => t)
+})
 
 const legendEntries = computed(() => {
   const seen = new Set<string>()

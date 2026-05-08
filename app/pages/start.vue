@@ -28,9 +28,6 @@ async function bootstrapSession() {
   // Load POS context — fall back to mock if backend is unavailable.
   try {
     await posContext.refresh()
-    if (posContext.tables.length === 0) {
-      posContext.enableMock()
-    }
   }
   catch {
     posContext.enableMock()

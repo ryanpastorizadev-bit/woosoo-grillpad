@@ -60,7 +60,7 @@ export const usePosContextStore = defineStore('pos-context', {
       this.readiness = MOCK_POS_READINESS
       this.tables = MOCK_TABLES.map(t => ({
         ...t,
-        normalizedStatus: normalizeTableStatus(t.normalizedStatus),
+        normalizedStatus: normalizeTableStatus(t.rawStatus),
       }))
       this.lastError = null
     },

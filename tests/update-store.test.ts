@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useUpdateStore } from '~/stores/update'
 
 describe('update store behavior', () => {
@@ -33,5 +33,25 @@ describe('update store behavior', () => {
     store.applyUpdate()
 
     expect(handler).not.toHaveBeenCalled()
+  })
+
+  it('clears update availability flag', () => {
+    const store = useUpdateStore()
+    store.markUpdateAvailable()
+
+    store.clearUpdateAvailable()
+
+    expect(store.updateAvailable).toBe(false)
+  })
+
+  it('resets applying flag even when apply handler throws', () => {
+    const store = useUpdateStore()
+    store.registerApplyHandler(() => {
+      throw new Error('apply failed')
+    })
+    store.markUpdateAvailable()
+
+    expect(() => store.applyUpdate()).toThrow('apply failed')
+    expect(store.isApplyingUpdate).toBe(false)
   })
 })

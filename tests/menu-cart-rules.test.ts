@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { assertItemAllowedForCart } from '~/stores/cart'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { assertItemAllowedForCart, useCartStore } from '~/stores/cart'
 import { getVisibleMenuItems } from '~/stores/menu'
-import { useCartStore } from '~/stores/cart'
 
 describe('menu and cart workflow rules', () => {
   beforeEach(() => {
@@ -134,5 +133,71 @@ describe('menu and cart workflow rules', () => {
 
     expect(store.initialCart).toEqual([])
     expect(store.refillCart).toEqual([])
+  })
+
+  it('clear with initial kind only clears initial cart', () => {
+    const cart = useCartStore()
+    cart.initialCart = [{
+      id: 'initial-1',
+      name: 'Item',
+      categoryId: 'main',
+      packageIds: [],
+      price: 0,
+      availableForInitial: true,
+      availableForRefill: false,
+      refillGroup: 'none',
+      isActive: true,
+      quantity: 1,
+    }]
+    cart.refillCart = [{
+      id: 'refill-1',
+      name: 'Refill',
+      categoryId: 'side',
+      packageIds: [],
+      price: 0,
+      availableForInitial: false,
+      availableForRefill: true,
+      refillGroup: 'side',
+      isActive: true,
+      quantity: 1,
+    }]
+
+    cart.clear('initial')
+
+    expect(cart.initialCart).toEqual([])
+    expect(cart.refillCart).toHaveLength(1)
+  })
+
+  it('clear with refill kind only clears refill cart', () => {
+    const cart = useCartStore()
+    cart.initialCart = [{
+      id: 'initial-1',
+      name: 'Item',
+      categoryId: 'main',
+      packageIds: [],
+      price: 0,
+      availableForInitial: true,
+      availableForRefill: false,
+      refillGroup: 'none',
+      isActive: true,
+      quantity: 1,
+    }]
+    cart.refillCart = [{
+      id: 'refill-1',
+      name: 'Refill',
+      categoryId: 'side',
+      packageIds: [],
+      price: 0,
+      availableForInitial: false,
+      availableForRefill: true,
+      refillGroup: 'side',
+      isActive: true,
+      quantity: 1,
+    }]
+
+    cart.clear('refill')
+
+    expect(cart.initialCart).toHaveLength(1)
+    expect(cart.refillCart).toEqual([])
   })
 })

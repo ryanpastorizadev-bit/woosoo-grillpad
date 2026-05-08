@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { assertItemAllowedForCart } from '~/stores/cart'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { assertItemAllowedForCart, useCartStore } from '~/stores/cart'
 import { getVisibleMenuItems } from '~/stores/menu'
-import { useCartStore } from '~/stores/cart'
 
 describe('menu and cart workflow rules', () => {
   beforeEach(() => {

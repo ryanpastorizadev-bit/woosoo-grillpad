@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { registerDevice } from '~/services/api/device'
 import { restoreSession, startSession } from '~/services/api/session'
 
 definePageMeta({ middleware: ['session-phase'] })
@@ -13,9 +14,6 @@ const errorMessage = ref<string | null>(null)
 const needsSessionVerification = ref(false)
 const registration = reactive({
   token: '',
-  deviceId: '',
-  tableId: '',
-  tableName: '',
 })
 
 async function bootstrapSession() {
@@ -67,28 +65,37 @@ onMounted(async () => {
 async function submitRegistration() {
   if (submitting.value)
     return
+
+  const token = registration.token.trim()
   errorMessage.value = null
   needsSessionVerification.value = false
-  if (!registration.token || !registration.deviceId || !registration.tableId || !registration.tableName) {
-    errorMessage.value = 'All registration fields are required.'
+
+  if (!token) {
+    errorMessage.value = 'Registration token is required.'
     return
   }
 
   submitting.value = true
   try {
+    const registered = await registerDevice({ token })
+
+    if (!registered.success) {
+      throw new Error('Device registration was rejected by the server.')
+    }
+
     device.setDevice({
-      token: registration.token,
-      deviceId: registration.deviceId,
-      tableId: registration.tableId,
-      tableName: registration.tableName,
+      token: registered.token,
+      deviceId: registered.device.id,
+      tableId: registered.table.id,
+      tableName: registered.table.name,
     })
 
-    const started = await startSession({ tableId: registration.tableId })
+    const started = await startSession({ tableId: registered.table.id })
     session.start(started.tableId, started.sessionId)
     await navigateTo(routeForPhase(session.phase))
   }
   catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : 'Failed to start dining session.'
+    errorMessage.value = error instanceof Error ? error.message : 'Failed to register this tablet.'
     device.clearDevice()
     session.reset()
   }
@@ -108,7 +115,7 @@ async function submitRegistration() {
         GrillPad
       </h1>
       <p class="mx-auto mt-5 max-w-xl text-lg text-white/65">
-        Session-based tablet ordering for initial packages and controlled refills.
+        Register this tablet with the code from the admin device screen, then start the dining session assigned by the backend.
       </p>
 
       <p v-if="loading" class="mt-8 text-sm text-white/60">
@@ -122,31 +129,30 @@ async function submitRegistration() {
             Retry verification
           </AppButton>
         </div>
-        <div class="grid grid-cols-2 gap-4">
-          <label class="text-sm text-white/70">
-            Device Token
-            <input v-model="registration.token" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
-          </label>
-          <label class="text-sm text-white/70">
-            Device ID
-            <input v-model="registration.deviceId" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
-          </label>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <label class="text-sm text-white/70">
-            Table ID
-            <input v-model="registration.tableId" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
-          </label>
-          <label class="text-sm text-white/70">
-            Table Name
-            <input v-model="registration.tableName" type="text" class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-white" autocomplete="off">
-          </label>
-        </div>
+
+        <label class="text-sm text-white/70">
+          Registration Token
+          <input
+            v-model="registration.token"
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="6"
+            class="mt-1 w-full rounded-lg border border-white/20 bg-black/30 px-3 py-3 text-center text-2xl font-black tracking-[.4em] text-white"
+            autocomplete="one-time-code"
+            placeholder="000000"
+          >
+        </label>
+
+        <p class="text-xs text-white/45">
+          Device ID, table ID, table name, and API token are accepted only from the backend registration response.
+        </p>
+
         <p v-if="errorMessage" class="text-sm text-red-300">
           {{ errorMessage }}
         </p>
         <AppButton type="submit" size="lg" class="w-full" :disabled="submitting">
-          {{ submitting ? 'Starting...' : 'Start Dining' }}
+          {{ submitting ? 'Registering...' : 'Start Dining' }}
         </AppButton>
       </form>
 

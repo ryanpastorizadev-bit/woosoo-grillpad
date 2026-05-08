@@ -5,20 +5,19 @@ A frontend contract spine for `woosoo-grillpad` using Nuxt 4, Pinia, Tailwind CS
 
 ## Current Branch Scope
 
-Branch: `feat/mvp-contract-spine`
+Branch: `feat/register-device-start-flow-v2`
+
+This branch builds on the merged contract spine and wires `/start` into backend-issued device registration.
 
 Added or tightened:
 
-- `docs/woosoo_final_spec.md`
-- `app/services/api/endpoints.ts`
-- `app/services/api/device.ts`
-- `app/services/api/print-events.ts`
-- centralized endpoint usage in session/menu/order services
-- active order API contract
-- print event API contract/store
-- explicit `review` session phase
-- updated route guard mapping for `/order/review`
-- updated `CASE_FILE.md`
+- `/start` now calls `registerDevice()` before starting a session.
+- The tablet no longer accepts manual Device ID, Table ID, or Table Name from the user.
+- Device ID, table ID, table name, and API token are persisted only from the backend registration response.
+- Registration form is reduced to a 6-digit manual token fallback.
+- Duplicate submit guard remains in place through `submitting`.
+- Existing cached sessions are still verified against the backend before navigation.
+- `tests/session-guard.test.ts` now matches the explicit `review` phase contract.
 
 ## Install
 ```bash
@@ -50,7 +49,10 @@ npm run test
 
 Manual validation:
 
-- `/start` registers/restores device.
+- `/start` restores an already-registered device only after backend verification succeeds.
+- `/start` rejects empty registration token submissions.
+- `/start` persists only backend-issued device/table/token fields after registration.
+- `/start` clears device/session state after registration or start-session failure.
 - `/package` is only accessible during `package_selection`.
 - `/order/initial` is only accessible during `initial_order`.
 - `/order/review` is only accessible during `review` and requires initial cart items.
@@ -60,9 +62,8 @@ Manual validation:
 - token loss or 401 returns to `/start`.
 
 ## Next TODOs
-- Wire `registerDevice()` into `/start` instead of manual token/device/table fields.
-- Add QR scanner component and manual 6-digit fallback UI.
+- Add QR scanner component and keep the manual 6-digit fallback UI.
+- Add component-level tests around `/start` once the test harness supports Nuxt page mounting.
 - Add real Reverb plugin for session/order/print control events.
-- Add Vitest coverage for `useSessionGuard`, session store transitions, cart rules, endpoint constants, and print event store.
 - Add visual components for product cards, cart drawer, package comparison, refill header, and print event banner.
 - Sync endpoint constants with the finalized `woosoo-app` backend route file before production.

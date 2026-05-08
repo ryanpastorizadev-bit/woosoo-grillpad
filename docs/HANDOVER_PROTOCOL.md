@@ -1,7 +1,14 @@
 # HANDOVER_PROTOCOL.md
 
 ## What was created
-A frontend foundation for `tablet-ordering-pwa/` using Nuxt 4, Pinia, Tailwind CSS, PWA support, and strict session phase routing.
+An MVP tablet ordering client in Nuxt 4 with:
+- Device registration + token persistence
+- Session start and backend restore
+- Package selection, initial order, refill order
+- Active order + print-event acknowledgement surface
+- Session-phase route gating
+- PWA safe-update behavior
+- Realtime sync wiring tied to active session identity
 
 ## Install
 ```bash
@@ -23,9 +30,13 @@ APP_VERSION=$(git rev-parse --short HEAD) docker compose -f docker-compose.front
 - `registerType: prompt` prevents surprise reloads during active sessions.
 - `NUXT_PUBLIC_APP_VERSION` should be set to the commit hash during deployment.
 
-## Next TODOs
-- Replace mock menu/package arrays with API-backed composables.
-- Add `/api/orders/initial` and `/api/orders/refill` Zod schemas.
-- Add real Reverb plugin for session control events.
-- Add visual components for product cards, cart drawer, package comparison, and refill header.
-- Add Vitest coverage for store transition rules.
+## Operational checks
+- Run `npm run typecheck`
+- Run `npm run lint` (note: repository lint currently includes `.agents` skill docs that may contain unrelated style errors)
+- Run `npm run build`
+- Run `npm run test`
+
+## Realtime notes
+- Realtime connection is subscribed only when device/session identity is present.
+- Realtime teardown happens when device/session is cleared.
+- Relevant events trigger active-order and print-event refresh to avoid stale UI.

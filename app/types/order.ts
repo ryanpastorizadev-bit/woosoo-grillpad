@@ -32,3 +32,29 @@ export interface OrderSessionState {
   initialOrderId: string | null
   initialOrderSubmittedAt: string | null
 }
+
+export interface ActiveOrderItem {
+  id: string
+  name: string
+  quantity: number
+  status?: string | null
+}
+
+export interface ActiveOrder {
+  id: string
+  sessionId: string
+  tableId: string
+  status: string
+  items: ActiveOrderItem[]
+  submittedAt: string | null
+  updatedAt: string | null
+}
+
+export interface PrintEvent {
+  id: string
+  orderId: string
+  status: string
+  acknowledgedAt: string | null
+  createdAt: string | null
+  updatedAt: string | null
+}

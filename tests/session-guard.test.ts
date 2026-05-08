@@ -13,15 +13,37 @@ describe('session route guard', () => {
     expect(result).toEqual({ allowed: false, redirectTo: '/start' })
   })
 
-  it('prevents review route when initial cart is empty', () => {
+  it('redirects review route back to initial order before explicit review phase', () => {
     const result = validateRoute('/order/review', {
       phase: 'initial_order',
+      isRegistered: true,
+      initialCount: 1,
+      isActive: true,
+    })
+
+    expect(result).toEqual({ allowed: false, redirectTo: '/order/initial' })
+  })
+
+  it('prevents review route when initial cart is empty', () => {
+    const result = validateRoute('/order/review', {
+      phase: 'review',
       isRegistered: true,
       initialCount: 0,
       isActive: true,
     })
 
     expect(result).toEqual({ allowed: false, redirectTo: '/order/initial' })
+  })
+
+  it('allows review route during review phase with initial cart items', () => {
+    const result = validateRoute('/order/review', {
+      phase: 'review',
+      isRegistered: true,
+      initialCount: 1,
+      isActive: true,
+    })
+
+    expect(result).toEqual({ allowed: true })
   })
 
   it('allows refill route during refill phase', () => {

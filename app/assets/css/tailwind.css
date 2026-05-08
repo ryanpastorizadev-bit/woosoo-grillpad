@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@theme {
+  --font-sans: "Kanit", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Raleway", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-bg: var(--color-bg);
+  --color-brand-deep: var(--color-bg-deep);
+  --color-brand-black: var(--color-black);
+  --color-brand-white: var(--color-white);
+  --color-brand-accent: var(--color-accent);
+
+  --color-border-soft: var(--border-soft);
+  --color-border-accent: var(--border-accent);
+
+  --radius-card: var(--radius-card);
+  --radius-button: var(--radius-button);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__nuxt {
+  min-height: 100%;
+  background: var(--color-bg);
+  color: var(--text-primary);
+  font-family: "Kanit", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+.brand-heading {
+  font-family: "Raleway", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.grillpad-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at top left, rgba(246, 181, 109, 0.12), transparent 34rem),
+    linear-gradient(135deg, var(--color-bg), var(--color-bg-deep) 52%, #000000);
+}
+
+.gp-card {
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.055),
+    rgba(255, 255, 255, 0.025)
+  );
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.36);
+  border-radius: var(--radius-card);
+}

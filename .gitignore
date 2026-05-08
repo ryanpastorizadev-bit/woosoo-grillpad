@@ -1,0 +1,29 @@
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+
+# Nuxt / Vite build output
+.nuxt/
+.output/
+.vite/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor state
+.idea/
+.vscode/

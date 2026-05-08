@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   title?: string
   message?: string
   retryLabel?: string
@@ -19,14 +19,14 @@ const emit = defineEmits<{
 <template>
   <div class="gp-card border-red-300/40 bg-red-500/8 p-6">
     <p class="font-semibold text-red-200">
-      {{ props.title }}
+      {{ title }}
     </p>
     <p class="mt-2 text-sm text-red-100/80">
-      {{ props.message }}
+      {{ message }}
     </p>
-    <div v-if="props.retryable || $slots.default" class="mt-5 flex items-center gap-3">
-      <AppButton v-if="props.retryable" variant="ghost" @click="emit('retry')">
-        {{ props.retryLabel }}
+    <div v-if="retryable || $slots.default" class="mt-5 flex items-center gap-3">
+      <AppButton v-if="retryable" variant="ghost" @click="emit('retry')">
+        {{ retryLabel }}
       </AppButton>
       <slot />
     </div>

@@ -7,7 +7,6 @@ const props = withDefaults(defineProps<{
   class?: string
 }>(), {
   width: 'xl',
-  class: undefined,
 })
 
 const classes = computed(() => cn(

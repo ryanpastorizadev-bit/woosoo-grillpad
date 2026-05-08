@@ -9,10 +9,7 @@ const props = withDefaults(defineProps<{
   badge?: string
   class?: string
 }>(), {
-  subtitle: undefined,
   price: null,
-  badge: undefined,
-  class: undefined,
 })
 
 const rootClass = computed(() => cn('gp-card p-6', props.class))

@@ -2,11 +2,9 @@
 import { computed } from 'vue'
 import { cn } from '~/utils/cn'
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   class?: string
-}>(), {
-  class: undefined,
-})
+}>()
 
 const classes = computed(() => cn('gp-card', props.class))
 </script>

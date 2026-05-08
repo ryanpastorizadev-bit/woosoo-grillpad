@@ -45,9 +45,7 @@ async function goToReview() {
 
 <template>
   <AppScreen>
-    <div class="flex items-end justify-between gap-6">
-      <AppSectionHeader kicker="Initial Order" title="Build the first round" />
-    </div>
+    <AppSectionHeader kicker="Initial Order" title="Build the first round" />
 
     <ErrorState v-if="errorMessage" class="mt-4" :message="errorMessage" />
 

@@ -63,16 +63,19 @@ async function submitInitial() {
     <ErrorState v-if="order.lastError" class="mt-4" :message="order.lastError" />
 
     <CartSummaryPanel
+      v-if="summaryRows.length > 0"
       class="mt-8"
       title="Initial order summary"
       :subtitle="`Items: ${cart.initialCount}`"
       :items="summaryRows"
-    >
-      <EmptyState
-        title="Cart is empty"
-        description="Add items from the initial order screen before submitting."
-      />
-    </CartSummaryPanel>
+    />
+
+    <EmptyState
+      v-else
+      class="mt-8"
+      title="Cart is empty"
+      description="Add items from the initial order screen before submitting."
+    />
 
     <BottomActionBar>
       <AppButton size="lg" :disabled="!canSubmitInitialOrder(order.submitting, session.sessionId, session.packageId, cart.initialCount)" @click="submitInitial">

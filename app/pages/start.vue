@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { registerDevice } from '~/services/api/device'
 import { restoreSession, startSession } from '~/services/api/session'
+import { isValidRegistrationToken, normalizeRegistrationToken } from '~/utils/registration'
 
 definePageMeta({ middleware: ['session-phase'] })
 const config = useRuntimeConfig()
@@ -14,6 +15,15 @@ const errorMessage = ref<string | null>(null)
 const needsSessionVerification = ref(false)
 const registration = reactive({
   token: '',
+})
+
+const normalizedRegistrationToken = computed(() => normalizeRegistrationToken(registration.token))
+const canSubmitRegistration = computed(() => isValidRegistrationToken(normalizedRegistrationToken.value) && !submitting.value)
+
+watch(() => registration.token, (value) => {
+  const normalized = normalizeRegistrationToken(value)
+  if (value !== normalized)
+    registration.token = normalized
 })
 
 async function bootstrapSession() {
@@ -63,17 +73,12 @@ onMounted(async () => {
 })
 
 async function submitRegistration() {
-  if (submitting.value)
+  if (!canSubmitRegistration.value)
     return
 
-  const token = registration.token.trim()
+  const token = normalizedRegistrationToken.value
   errorMessage.value = null
   needsSessionVerification.value = false
-
-  if (!token) {
-    errorMessage.value = 'Registration token is required.'
-    return
-  }
 
   submitting.value = true
   try {
@@ -146,7 +151,7 @@ async function submitRegistration() {
         <p v-if="errorMessage" class="text-sm text-red-300">
           {{ errorMessage }}
         </p>
-        <AppButton type="submit" size="lg" class="w-full" :disabled="submitting">
+        <AppButton type="submit" size="lg" class="w-full" :disabled="!canSubmitRegistration">
           {{ submitting ? 'Registering...' : 'Start Dining' }}
         </AppButton>
       </form>

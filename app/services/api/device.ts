@@ -4,6 +4,8 @@ import { useApi } from '~/composables/useApi'
 
 const IdToStringSchema = z.union([z.string(), z.number()]).pipe(z.coerce.string())
 
+const IdToStringSchema = z.union([z.string(), z.number()]).pipe(z.coerce.string())
+
 const BroadcastingConfigSchema = z.object({
   key: z.string().optional(),
   host: z.string().optional(),
@@ -25,7 +27,7 @@ const DeviceRegistrationResponseSchema = z.object({
   broadcasting: BroadcastingConfigSchema,
 })
 
-export type DeviceRegistrationResponse = z.infer<typeof DeviceRegistrationResponseSchema>
+export type DeviceRegistrationResponse = z.output<typeof DeviceRegistrationResponseSchema>
 
 export interface RegisterDevicePayload extends Record<string, unknown> {
   token?: string
